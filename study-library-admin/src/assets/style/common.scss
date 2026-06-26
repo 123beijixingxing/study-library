@@ -1,0 +1,39 @@
+:root {
+  --admin-bg: #f5f7fa;
+  --admin-surface: #ffffff;
+  --admin-primary: #2563eb;
+  --admin-primary-soft: #dbeafe;
+  --admin-text: #1f2937;
+  --admin-text-muted: #6b7280;
+  --admin-border: #e5e7eb;
+}
+
+body {
+  background: var(--admin-bg);
+  color: var(--admin-text);
+}
+
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.page-desc {
+  margin-top: 8px;
+  color: var(--admin-text-muted);
+  line-height: 1.6;
+}

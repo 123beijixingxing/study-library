@@ -1,0 +1,53 @@
+{
+  "packageName": "学习通接口正式交付包",
+  "version": "1.0",
+  "generatedAt": "2026-05-12",
+  "sections": [
+    {
+      "section": "01-总文档",
+      "files": [
+        "学习通后台管理接口文档.md",
+        "学习通前台接口文档.md",
+        "学习通前后台接口实现状态说明.md",
+        "学习通后台权限点索引.md"
+      ]
+    },
+    {
+      "section": "02-拆分接口",
+      "files": [
+        "后台接口/README.md",
+        "前台接口/README.md"
+      ]
+    },
+    {
+      "section": "03-联调资产",
+      "files": [
+        "学习通OpenAPI草案.yaml",
+        "学习通接口联调-PostmanCollection草案.json",
+        "学习通接口联调-PostmanCollection扩展草案.json",
+        "学习通接口联调-Postman环境草案.json",
+        "学习通Apifox导入说明.md",
+        "学习通接口联调报文集.md",
+        "学习通接口成功响应示例集.md",
+        "学习通接口错误响应示例集.md"
+      ]
+    },
+    {
+      "section": "04-字段与规范",
+      "files": [
+        "学习通接口DTO字段字典.md",
+        "学习通前后端状态码规范.md",
+        "学习通状态枚举字典与字段约束说明.md",
+        "学习通状态流转图说明.md"
+      ]
+    },
+    {
+      "section": "05-交接说明",
+      "files": [
+        "操作手册.md",
+        "验收清单.md",
+        "打包建议.md"
+      ]
+    }
+  ]
+}

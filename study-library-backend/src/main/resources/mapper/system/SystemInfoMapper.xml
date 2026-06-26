@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.system.mapper.SystemInfoMapper">
+
+  <resultMap id="SystemInfoResultMap" type="com.studylib.modules.system.entity.SystemInfoEntity">
+    <result column="system_name" property="systemName" />
+    <result column="version" property="version" />
+    <result column="copyright" property="copyright" />
+    <result column="contact_info" property="contactInfo" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectDefault" resultMap="SystemInfoResultMap">
+    select system_name, version, copyright, contact_info, created_at, updated_at, created_by, updated_by, deleted
+    from system_info
+    where config_key = 'default'
+      and deleted = false
+  </select>
+
+  <update id="updateDefault">
+    update system_info
+    set system_name = #{systemName},
+        version = #{version},
+        copyright = #{copyright},
+        contact_info = #{contactInfo},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where config_key = 'default'
+      and deleted = false
+  </update>
+</mapper>

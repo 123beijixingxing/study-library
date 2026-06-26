@@ -1,0 +1,67 @@
+yarn run v1.22.22
+$ vite
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m4245[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m10001[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.9.188:[1m10001[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.17.148.241:[1m10001[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m17:32:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/dashboard/dashboard.vue[22m
+[2m17:32:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/statistics/statistics.vue[22m
+[2m17:34:04[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/dashboard/summary[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:04[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/dashboard/user-trend[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:06[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/logout[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:07[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:09[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:09[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:09[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:10[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:10[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:11[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:11[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:13[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:17[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:17[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:18[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:18[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+[2m17:34:18[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/admin/v1/auth/login[39m
+Error: connect ECONNREFUSED 127.0.0.1:28080
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+error Command failed with exit code 4294967295.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.garden.mapper.GardenContentMapper">
+
+  <resultMap id="GardenContentResultMap" type="com.studylib.modules.garden.entity.GardenContentEntity">
+    <id column="id" property="id" />
+    <result column="content_type" property="contentType" />
+    <result column="source_name" property="sourceName" />
+    <result column="author_name" property="authorName" />
+    <result column="content_text" property="contentText" />
+    <result column="like_count" property="likeCount" />
+    <result column="comment_count" property="commentCount" />
+    <result column="audit_status" property="auditStatus" />
+    <result column="publish_time" property="publishTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="GardenContentResultMap">
+    select id, content_type, source_name, author_name, content_text, like_count, comment_count, audit_status, publish_time,
+           created_at, updated_at, created_by, updated_by, deleted
+    from garden_contents
+    where id = #{id}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from garden_contents
+    <where>
+      and deleted = false
+      <if test="contentType != null and contentType != '' and contentType != 'all'">
+        and content_type = #{contentType}
+      </if>
+      <if test="auditStatus != null and auditStatus != '' and auditStatus != 'all'">
+        and audit_status = #{auditStatus}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="GardenContentResultMap">
+    select id, content_type, source_name, author_name, content_text, like_count, comment_count, audit_status, publish_time,
+           created_at, updated_at, created_by, updated_by, deleted
+    from garden_contents
+    <where>
+      and deleted = false
+      <if test="contentType != null and contentType != '' and contentType != 'all'">
+        and content_type = #{contentType}
+      </if>
+      <if test="auditStatus != null and auditStatus != '' and auditStatus != 'all'">
+        and audit_status = #{auditStatus}
+      </if>
+    </where>
+    order by id asc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <update id="update">
+    update garden_contents
+    set content_type = #{contentType},
+        source_name = #{sourceName},
+        author_name = #{authorName},
+        content_text = #{contentText},
+        like_count = #{likeCount},
+        comment_count = #{commentCount},
+        audit_status = #{auditStatus},
+        publish_time = #{publishTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update garden_contents
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+</mapper>

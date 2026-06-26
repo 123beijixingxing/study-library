@@ -1,0 +1,24 @@
+{
+  "describe": "该字段为此json模块描述--无需翻译，zh对象--为页面的各个模块中文字，单词，文段内容等，en对象--为页面的各个模块英文字，单词，文段内容等",
+  "key": "tk",
+  "name": "zh",
+  "success": true,
+  "errCode": 0,
+  "msg": "success",
+  "data": {
+    "zh": {
+      "login": {
+        "describe": "该字段为此json模块描述--无需翻译，登录模块",
+        "language": "语言",
+        "chinese": "简体中文",
+        "english": "English",
+        "login": "登录",
+        "autoLogin": "下次自动登录",
+        "username": "账号",
+        "password": "密码",
+        "rememberAccount": "是否记住账号",
+        "validator": { "tip1": "账号不能为空", "tip2": "密码不能为空", "tip3": "不允许输入空格", "tip4": "请正确填写内容", "tip5": "请输入密码" }
+      }
+    }
+  }
+}

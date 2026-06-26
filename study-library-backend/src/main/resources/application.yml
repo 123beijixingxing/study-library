@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: study-library-backend
+  profiles:
+    active: dev
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.studylib.modules
+  type-handlers-package: com.studylib.common.persistence.typehandler
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    jdbc-type-for-null: 'NULL'
+
+app:
+  jwt:
+    issuer: study-library-backend
+    access-token-expire-seconds: 7200
+    refresh-token-expire-seconds: 604800
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

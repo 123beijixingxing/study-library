@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.risk.mapper.SensitiveWordMapper">
+
+  <resultMap id="SensitiveWordResultMap" type="com.studylib.modules.risk.entity.SensitiveWordEntity">
+    <id column="word_id" property="wordId" />
+    <result column="word" property="word" />
+    <result column="replace_text" property="replaceText" />
+    <result column="status" property="status" />
+    <result column="update_time" property="updateTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="SensitiveWordResultMap">
+    select word_id, word, replace_text, status, update_time, created_at, updated_at, created_by, updated_by, deleted
+    from sensitive_words
+    where word_id = #{wordId}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from sensitive_words
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and word like concat('%', #{keyword}, '%')
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="SensitiveWordResultMap">
+    select word_id, word, replace_text, status, update_time, created_at, updated_at, created_by, updated_by, deleted
+    from sensitive_words
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and word like concat('%', #{keyword}, '%')
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by word_id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="wordId">
+    insert into sensitive_words (
+      word, replace_text, status, update_time,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{word}, #{replaceText}, #{status}, #{updateTime},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update sensitive_words
+    set word = #{word},
+        replace_text = #{replaceText},
+        status = #{status},
+        update_time = #{updateTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where word_id = #{wordId}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update sensitive_words
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where word_id = #{wordId}
+      and deleted = false
+  </update>
+</mapper>

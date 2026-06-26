@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习通后台 - 登录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1a1a2e; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-box { width: 420px; background: #16213e; border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .logo { text-align: center; margin-bottom: 32px; }
+        .logo h1 { color: #00d9ff; font-size: 28px; margin-bottom: 8px; }
+        .logo p { color: #888; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #ccc; font-size: 14px; }
+        .form-group input { width: 100%; padding: 14px 16px; background: #0f3460; border: 1px solid #1a1a2e; border-radius: 8px; color: white; font-size: 14px; transition: all 0.3s; }
+        .form-group input:focus { outline: none; border-color: #00d9ff; box-shadow: 0 0 0 3px rgba(0,217,255,0.1); }
+        .form-group input::placeholder { color: #555; }
+        .btn-login { width: 100%; padding: 14px; background: linear-gradient(135deg, #00d9ff, #0077b6); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,217,255,0.4); }
+        .form-options { display: flex; justify-content: space-between; margin-top: 16px; font-size: 14px; }
+        .form-options a { color: #00d9ff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">
+            <h1>学习通后台</h1>
+            <p>管理系统</p>
+        </div>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" placeholder="请输入用户名" required>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" placeholder="请输入密码" required>
+            </div>
+            <button type="submit" class="btn-login">登 录</button>
+            <div class="form-options">
+                <a href="#">忘记密码？</a>
+                <a href="#">返回前台</a>
+            </div>
+        </form>
+    </div>
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

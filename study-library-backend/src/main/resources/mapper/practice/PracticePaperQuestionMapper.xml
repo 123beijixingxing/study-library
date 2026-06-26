@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.practice.mapper.PracticePaperQuestionMapper">
+
+  <resultMap id="PracticePaperQuestionResultMap" type="com.studylib.modules.practice.entity.PracticePaperQuestionEntity">
+    <id column="id" property="id" />
+    <result column="paper_id" property="paperId" />
+    <result column="sort_no" property="sortNo" />
+    <result column="question_id" property="questionId" />
+    <result column="bank_id" property="bankId" />
+    <result column="chapter_name" property="chapterName" />
+    <result column="template_code" property="templateCode" />
+    <result column="version_group_id" property="versionGroupId" />
+    <result column="version_no" property="versionNo" />
+    <result column="version_remark" property="versionRemark" />
+    <result column="source_action" property="sourceAction" />
+    <result column="source_question_id" property="sourceQuestionId" />
+    <result column="source_version_no" property="sourceVersionNo" />
+    <result column="title" property="title" />
+    <result column="question_type" property="questionType" />
+    <result column="difficulty" property="difficulty" />
+    <result column="status" property="status" />
+    <result column="answer_text" property="answerText" />
+    <result column="analysis_text" property="analysisText" />
+    <result column="option_json" property="optionJson" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="countByPaperId" resultType="java.lang.Long">
+    select count(1)
+    from practice_paper_questions
+    where paper_id = #{paperId}
+      and deleted = false
+  </select>
+
+  <select id="selectByPaperId" resultMap="PracticePaperQuestionResultMap">
+    select id, paper_id, sort_no, question_id, bank_id, chapter_name, template_code, version_group_id, version_no,
+           version_remark, source_action, source_question_id, source_version_no, title, question_type, difficulty,
+           status, answer_text, analysis_text, option_json, created_at, updated_at, created_by, updated_by, deleted
+    from practice_paper_questions
+    where paper_id = #{paperId}
+      and deleted = false
+    order by sort_no asc, id asc
+  </select>
+
+  <update id="softDeleteByPaperId">
+    update practice_paper_questions
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where paper_id = #{paperId}
+      and deleted = false
+  </update>
+
+  <insert id="insertBatch">
+    insert into practice_paper_questions (
+      paper_id, sort_no, question_id, bank_id, chapter_name, template_code, version_group_id, version_no,
+      version_remark, source_action, source_question_id, source_version_no, title, question_type, difficulty,
+      status, answer_text, analysis_text, option_json, created_at, updated_at, created_by, updated_by, deleted
+    )
+    values
+    <foreach collection="questionList" item="item" separator=",">
+      (#{paperId}, #{item.sortNo}, #{item.questionId}, #{item.bankId}, #{item.chapterName}, #{item.templateCode}, #{item.versionGroupId}, #{item.versionNo},
+       #{item.versionRemark}, #{item.sourceAction}, #{item.sourceQuestionId}, #{item.sourceVersionNo}, #{item.title}, #{item.questionType}, #{item.difficulty},
+       #{item.status}, #{item.answerText}, #{item.analysisText}, #{item.optionJson}, #{item.createdAt}, #{item.updatedAt}, #{item.createdBy}, #{item.updatedBy}, #{item.deleted})
+    </foreach>
+  </insert>
+</mapper>

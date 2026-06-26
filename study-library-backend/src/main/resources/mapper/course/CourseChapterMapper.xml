@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.course.mapper.CourseChapterMapper">
+
+  <resultMap id="CourseChapterResultMap" type="com.studylib.modules.course.entity.CourseChapterEntity">
+    <id column="id" property="id" />
+    <result column="title" property="title" />
+    <result column="duration_minutes" property="durationMinutes" />
+    <result column="status" property="status" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="CourseChapterResultMap">
+    select id, title, duration_minutes, status, created_at, updated_at, created_by, updated_by, deleted
+    from course_chapters
+    where id = #{id}
+      and deleted = false
+  </select>
+
+  <select id="selectByCourseId" resultMap="CourseChapterResultMap">
+    select id, title, duration_minutes, status, created_at, updated_at, created_by, updated_by, deleted
+    from course_chapters
+    where course_id = #{courseId}
+      and deleted = false
+    order by id asc
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="entity.id">
+    insert into course_chapters (course_id, title, duration_minutes, status, created_at, updated_at, created_by, updated_by, deleted)
+    values (#{courseId}, #{entity.title}, #{entity.durationMinutes}, #{entity.status}, #{entity.createdAt}, #{entity.updatedAt}, #{entity.createdBy}, #{entity.updatedBy}, #{entity.deleted})
+  </insert>
+
+  <update id="update">
+    update course_chapters
+    set course_id = #{courseId},
+        title = #{entity.title},
+        duration_minutes = #{entity.durationMinutes},
+        status = #{entity.status},
+        updated_at = #{entity.updatedAt},
+        updated_by = #{entity.updatedBy},
+        deleted = #{entity.deleted}
+    where id = #{entity.id}
+      and deleted = false
+  </update>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.home.mapper.HomeSectionMapper">
+
+  <resultMap id="HomeSectionResultMap" type="com.studylib.modules.home.entity.HomeSectionEntity">
+    <id column="id" property="id" />
+    <result column="section_type" property="sectionType" />
+    <result column="title" property="title" />
+    <result column="summary" property="summary" />
+    <result column="hot_score" property="hotScore" />
+    <result column="sort_no" property="sortNo" />
+    <result column="display_status" property="displayStatus" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="HomeSectionResultMap">
+    select id, section_type, title, summary, hot_score, sort_no, display_status, created_at, updated_at, created_by, updated_by, deleted
+    from home_sections
+    where id = #{id}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from home_sections
+    <where>
+      and deleted = false
+      <if test="sectionType != null and sectionType != '' and sectionType != 'all'">
+        and section_type = #{sectionType}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="HomeSectionResultMap">
+    select id, section_type, title, summary, hot_score, sort_no, display_status, created_at, updated_at, created_by, updated_by, deleted
+    from home_sections
+    <where>
+      and deleted = false
+      <if test="sectionType != null and sectionType != '' and sectionType != 'all'">
+        and section_type = #{sectionType}
+      </if>
+    </where>
+    order by sort_no asc, id asc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <update id="update">
+    update home_sections
+    set section_type = #{sectionType},
+        title = #{title},
+        summary = #{summary},
+        hot_score = #{hotScore},
+        sort_no = #{sortNo},
+        display_status = #{displayStatus},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update home_sections
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+</mapper>

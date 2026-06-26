@@ -1,0 +1,841 @@
+{
+  "info": {
+    "name": "学习通接口联调扩展草案",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Extended draft collection with broader frontend and backend core API coverage."
+  },
+  "variable": [
+    { "key": "appBaseUrl", "value": "/api/app/v1" },
+    { "key": "adminBaseUrl", "value": "/api/admin/v1" },
+    { "key": "appToken", "value": "app_access_token_xxx" },
+    { "key": "adminToken", "value": "admin_access_token_xxx" }
+  ],
+  "item": [
+    {
+      "name": "App Auth Extended",
+      "item": [
+        {
+          "name": "Verify Password Code",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailOrPhone\": \"13800000000\",\n  \"code\": \"123456\"\n}"
+            },
+            "url": "{{appBaseUrl}}/auth/password/verify"
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verifyToken\": \"verify_token_xxx\",\n  \"newPassword\": \"123456\",\n  \"confirmPassword\": \"123456\"\n}"
+            },
+            "url": "{{appBaseUrl}}/auth/password/reset"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Home And Search Extended",
+      "item": [
+        {
+          "name": "Get Home Hot Contents",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/home/hot-contents?limit=5"
+          }
+        },
+        {
+          "name": "Get Home Courses",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/home/courses?sectionType=recommend&pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Home Categories",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/home/categories?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Hot Keywords",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/search/hot-keywords?scene=home"
+          }
+        },
+        {
+          "name": "Get Search History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/search/history?scene=home"
+          }
+        },
+        {
+          "name": "Get Search Suggest",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/search/suggest?keyword=py"
+          }
+        },
+        {
+          "name": "Get Category Tree",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/categories/tree"
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Course And Practice Extended",
+      "item": [
+        {
+          "name": "Get Course Chapters",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/courses/2001/chapters"
+          }
+        },
+        {
+          "name": "Get Course Evaluations",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/courses/2001/evaluations?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Submit Study Progress",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chapterId\": 30001,\n  \"progressPercent\": 45.5\n}"
+            },
+            "url": "{{appBaseUrl}}/courses/2001/progress"
+          }
+        },
+        {
+          "name": "Get Practice Papers",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/practice/papers?scene=study&courseId=2001&pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Study Records",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/study-records?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Practice Records",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/practice-records?pageNum=1&pageSize=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Profile And Service Extended",
+      "item": [
+        {
+          "name": "Get Overview",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/overview"
+          }
+        },
+        {
+          "name": "Get Member Center",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/member-center"
+          }
+        },
+        {
+          "name": "Get Growth",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/growth"
+          }
+        },
+        {
+          "name": "Get Check In Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/check-in/status"
+          }
+        },
+        {
+          "name": "Check In",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/check-in"
+          }
+        },
+        {
+          "name": "Get Tasks",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/tasks?taskType=study"
+          }
+        },
+        {
+          "name": "Get Service Sessions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/customer-service/sessions"
+          }
+        },
+        {
+          "name": "Get Service Messages",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/customer-service/sessions/8001/messages?pageNum=1&pageSize=20"
+          }
+        },
+        {
+          "name": "Send Service Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messageText\": \"您好，我的课程无法继续播放。\"\n}"
+            },
+            "url": "{{appBaseUrl}}/me/customer-service/sessions/8001/messages"
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Garden Extended",
+      "item": [
+        {
+          "name": "Get Garden Contents",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/garden/contents?tabType=hot&pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Garden Content Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/garden/contents/3001"
+          }
+        },
+        {
+          "name": "Get Garden Comments",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/garden/contents/3001/comments?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Create Garden Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commentText\": \"内容很有帮助，感谢分享。\"\n}"
+            },
+            "url": "{{appBaseUrl}}/garden/contents/3001/comments"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Dashboard And Users Extended",
+      "item": [
+        {
+          "name": "Get Admin Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/dashboard/summary"
+          }
+        },
+        {
+          "name": "Get Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/users?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"study_user_03\",\n  \"password\": \"123456\",\n  \"confirmPassword\": \"123456\",\n  \"email\": \"user03@example.com\",\n  \"phone\": \"13800000003\",\n  \"role\": \"app_user\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/users"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Content And Members Extended",
+      "item": [
+        {
+          "name": "Get Member Packages",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/member-packages?status=enabled"
+          }
+        },
+        {
+          "name": "Save Member Package",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"packageName\": \"年度会员\",\n  \"price\": 299,\n  \"durationDays\": 365,\n  \"benefitList\": [{ \"code\": \"practice\", \"name\": \"专项练习\", \"enabled\": true }]\n}"
+            },
+            "url": "{{adminBaseUrl}}/member-packages"
+          }
+        },
+        {
+          "name": "Get Members",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/members?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Grant Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberLevel\": \"year_vip\",\n  \"expireTime\": \"2027-04-24 23:59:59\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/members/10001/grant"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Search Config And Reports Extended",
+      "item": [
+        {
+          "name": "Get Search Keywords",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/search/hot-keywords?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Save Search Keyword",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"Python\",\n  \"scene\": \"home\",\n  \"sortNo\": 1,\n  \"effectTimeRange\": [\"2026-04-24 00:00:00\", \"2026-05-24 23:59:59\"]\n}"
+            },
+            "url": "{{adminBaseUrl}}/search/hot-keywords"
+          }
+        },
+        {
+          "name": "Get Reports",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/reports?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Sensitive Words",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/sensitive-words?pageNum=1&pageSize=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Service And Statistics Extended",
+      "item": [
+        {
+          "name": "Get Service Tickets",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/service-tickets?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Reply Service Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"replyContent\": \"您好，您的问题已处理，请重新尝试。\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/service-tickets/8001/reply"
+          }
+        },
+        {
+          "name": "Get Course Statistics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/statistics/courses?dateType=7d"
+          }
+        },
+        {
+          "name": "Get Activity Statistics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/statistics/activities?dateType=7d"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Additional Core Requests",
+      "item": [
+        {
+          "name": "App Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/auth/logout"
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/profile"
+          }
+        },
+        {
+          "name": "Get Category Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/categories/11"
+          }
+        },
+        {
+          "name": "Get Sub Category Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/sub-categories/1101"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nickname\": \"学习者小李\",\n  \"email\": \"user01@example.com\"\n}"
+            },
+            "url": "{{appBaseUrl}}/me/profile"
+          }
+        },
+        {
+          "name": "Get Study Records",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/study-records?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Wrong Questions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/wrong-questions?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get System Info",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/system/info"
+          }
+        },
+        {
+          "name": "Get Scan Config",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/system/scan-config"
+          }
+        },
+        {
+          "name": "Get Favorites",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/favorites?favoriteType=course&pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Service Faqs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{appToken}}" }],
+            "url": "{{appBaseUrl}}/me/customer-service/faqs?keyword=会员"
+          }
+        },
+        {
+          "name": "Admin Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/auth/logout"
+          }
+        },
+        {
+          "name": "Get Recommend Slots",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/recommend-slots?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Message Templates",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/message-templates?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Reports Detail List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/reports?pageNum=1&pageSize=10&status=pending"
+          }
+        },
+        {
+          "name": "Get User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/statistics/users?dateType=7d"
+          }
+        },
+        {
+          "name": "Get System Features",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/system/features"
+          }
+        },
+        {
+          "name": "Get System Info Config",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/system/info"
+          }
+        },
+        {
+          "name": "Get Questions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/questions?pageNum=1&pageSize=10&bankId=8001"
+          }
+        },
+        {
+          "name": "Create Practice Paper",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paperName\": \"Python 第一章章节练习\",\n  \"paperType\": \"chapter\",\n  \"questionIdList\": [50001, 50002],\n  \"courseId\": 2001\n}"
+            },
+            "url": "{{adminBaseUrl}}/practice-papers"
+          }
+        },
+        {
+          "name": "Get Practice Analysis",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/practice-records/analysis?courseId=2001&startDate=2026-04-01&endDate=2026-04-30"
+          }
+        },
+        {
+          "name": "Get Operation Logs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/logs/operations?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Login Logs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/logs/logins?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Practice Entries",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/practice/entries?scene=study"
+          }
+        },
+        {
+          "name": "Get Member Renewals",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/members/renewals?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get Service Ticket Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/service-tickets/8001"
+          }
+        },
+        {
+          "name": "Get Admin Contents",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/contents?pageNum=1&pageSize=10&contentType=hot"
+          }
+        },
+        {
+          "name": "Audit Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"auditStatus\": \"approved\",\n  \"auditRemark\": \"审核通过\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/contents/3001/audit"
+          }
+        },
+        {
+          "name": "Get Favorites Admin",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/favorites?pageNum=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Create Home Course Config",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sectionType\": \"recommend\",\n  \"courseId\": 2001,\n  \"courseName\": \"Python 入门基础\",\n  \"summary\": \"首页推荐课程\",\n  \"hotScore\": 98,\n  \"sortNo\": 1\n}"
+            },
+            "url": "{{adminBaseUrl}}/home/courses"
+          }
+        },
+        {
+          "name": "Update Home Course Config",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"summary\": \"首页推荐课程-更新\",\n  \"hotScore\": 99,\n  \"sortNo\": 1,\n  \"displayStatus\": \"visible\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/home/courses/1001"
+          }
+        },
+        {
+          "name": "Update System Features",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scanEnabled\": true,\n  \"offlineDownloadEnabled\": true,\n  \"registerEnabled\": true\n}"
+            },
+            "url": "{{adminBaseUrl}}/system/features"
+          }
+        },
+        {
+          "name": "Update System Info",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"systemName\": \"学习通\",\n  \"version\": \"1.1.0\",\n  \"contactInfo\": \"support@example.com\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/system/info"
+          }
+        },
+        {
+          "name": "Get Growth Rules",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/growth-rules"
+          }
+        },
+        {
+          "name": "Update Growth Rules",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ruleList\": [{ \"taskCode\": \"study_daily\", \"taskName\": \"每日学习\", \"taskType\": \"study\", \"rewardValue\": 10 }]\n}"
+            },
+            "url": "{{adminBaseUrl}}/growth-rules"
+          }
+        },
+        {
+          "name": "Delete Message",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/messages/7101"
+          }
+        },
+        {
+          "name": "Update Question Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"published\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/questions/50001/status"
+          }
+        },
+        {
+          "name": "Delete Study Record",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{adminBaseUrl}}/study-records/60001"
+          }
+        }
+      ]
+    }
+  ]
+}

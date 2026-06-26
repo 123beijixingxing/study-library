@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习通后台 - 首页管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 240px; background: #001529; color: white; position: fixed; height: 100vh; }
+        .logo { height: 64px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; border-bottom: 1px solid #ffffff10; }
+        .logo span { color: #00d9ff; }
+        .menu { padding: 16px 0; }
+        .menu-item { padding: 14px 24px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.3s; color: #ffffff80; }
+        .menu-item:hover, .menu-item.active { background: #ffffff10; color: white; }
+        .menu-item.active { border-left: 3px solid #00d9ff; }
+        .menu-icon { font-size: 18px; }
+        .main { flex: 1; margin-left: 240px; }
+        .header { height: 64px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .content { padding: 24px; }
+        
+        .tabs { display: flex; gap: 0; background: white; border-radius: 12px 12px 0 0; overflow: hidden; margin-bottom: 0; }
+        .tab { padding: 14px 24px; cursor: pointer; background: #f0f0f0; border: none; font-size: 14px; transition: all 0.3s; }
+        .tab.active { background: white; color: #00d9ff; font-weight: 600; border-top: 3px solid #00d9ff; }
+        
+        .toolbar { background: white; padding: 16px; border-radius: 0 12px 12px 12px; margin-bottom: 16px; display: flex; gap: 12px; }
+        .btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; border: none; transition: all 0.3s; }
+        .btn-primary { background: #00d9ff; color: white; }
+        
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .card-title { font-size: 16px; font-weight: 600; }
+        .card-actions { display: flex; gap: 8px; }
+        .action-btn { padding: 4px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .action-btn.edit { background: #fff7e6; color: #fa8c16; }
+        .action-btn.delete { background: #fff1f0; color: #f5222d; }
+        
+        .course-item { display: flex; gap: 16px; padding: 12px; border: 1px solid #f0f0f0; border-radius: 8px; margin-bottom: 12px; }
+        .course-img { width: 120px; height: 80px; background: linear-gradient(135deg, #00d9ff, #0077b6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+        .course-info { flex: 1; }
+        .course-name { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+        .course-desc { font-size: 13px; color: #666; margin-bottom: 8px; }
+        .course-hot { font-size: 13px; color: #ff6b6b; }
+        
+        .category-tree { background: white; border-radius: 12px; padding: 20px; }
+        .category-item { padding: 12px; border: 1px solid #f0f0f0; border-radius: 8px; margin-bottom: 12px; }
+        .category-name { font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .sub-cats { display: flex; flex-wrap: wrap; gap: 8px; }
+        .sub-cat { padding: 6px 12px; background: #f0f0f0; border-radius: 16px; font-size: 13px; cursor: pointer; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 24px; width: 500px; }
+        .modal-header { font-size: 18px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .modal-close { cursor: pointer; font-size: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 8px; }
+        .modal-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo"><span>学习通</span>后台</div>
+            <nav class="menu">
+                <div class="menu-item" onclick="location.href='dashboard.html'"><span class="menu-icon">📊</span>仪表盘</div>
+                <div class="menu-item" onclick="location.href='user.html'"><span class="menu-icon">👥</span>用户管理</div>
+                <div class="menu-item active" onclick="location.href='home-manage.html'"><span class="menu-icon">🏠</span>首页管理</div>
+                <div class="menu-item" onclick="location.href='course.html'"><span class="menu-icon">📚</span>课程管理</div>
+                <div class="menu-item" onclick="location.href='garden-manage.html'"><span class="menu-icon">🌳</span>园地管理</div>
+                <div class="menu-item" onclick="location.href='member.html'"><span class="menu-icon">👑</span>会员管理</div>
+                <div class="menu-item" onclick="location.href='system.html'"><span class="menu-icon">⚙️</span>系统管理</div>
+                <div class="menu-item" onclick="location.href='statistics.html'"><span class="menu-icon">📈</span>数据统计</div>
+                <div class="menu-item" onclick="location.href='logs.html'"><span class="menu-icon">📝</span>日志管理</div>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <header class="header"><div class="header-title">首页管理</div></header>
+            <div class="content">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(this, 'recommend')">课程推荐</button>
+                    <button class="tab" onclick="switchTab(this, 'hot')">热门课程</button>
+                    <button class="tab" onclick="switchTab(this, 'latest')">最新课程</button>
+                    <button class="tab" onclick="switchTab(this, 'category')">课程分类</button>
+                </div>
+
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="showAddModal()">+ 添加课程</button>
+                </div>
+
+                <div id="content-area">
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Python基础入门</span>
+                                <div class="card-actions">
+                                    <button class="action-btn edit" onclick="showEditModal()">编辑</button>
+                                    <button class="action-btn delete">删除</button>
+                                </div>
+                            </div>
+                            <div class="course-item">
+                                <div class="course-img">Python</div>
+                                <div class="course-info">
+                                    <div class="course-name">Python基础入门</div>
+                                    <div class="course-desc">零基础学习Python编程</div>
+                                    <div class="course-hot">火热指数: 98</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">JavaWeb开发</span>
+                                <div class="card-actions">
+                                    <button class="action-btn edit">编辑</button>
+                                    <button class="action-btn delete">删除</button>
+                                </div>
+                            </div>
+                            <div class="course-item">
+                                <div class="course-img" style="background: linear-gradient(135deg, #52c41a, #1890ff);">Java</div>
+                                <div class="course-info">
+                                    <div class="course-name">JavaWeb开发</div>
+                                    <div class="course-desc">完整掌握JavaWeb技术</div>
+                                    <div class="course-hot">火热指数: 95</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <div class="modal-header"><span>添加推荐课程</span><span class="modal-close" onclick="closeModal('add-modal')">×</span></div>
+            <div class="form-group"><label>课程名称</label><input type="text" placeholder="请输入课程名称"></div>
+            <div class="form-group"><label>课程简介</label><input type="text" placeholder="请输入课程简介"></div>
+            <div class="form-group"><label>火热指数</label><input type="number" placeholder="请输入火热指数"></div>
+            <div class="modal-btns">
+                <button class="btn" onclick="closeModal('add-modal')">取消</button>
+                <button class="btn btn-primary" onclick="saveData()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(btn, type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const area = document.getElementById('content-area');
+            if (type === 'category') {
+                area.innerHTML = `
+                    <div class="category-tree">
+                        <div class="category-item">
+                            <div class="category-name">编程开发 <button class="action-btn edit">编辑</button></div>
+                            <div class="sub-cats">
+                                <span class="sub-cat">Python</span><span class="sub-cat">Java</span><span class="sub-cat">JavaScript</span><span class="sub-cat">C++</span>
+                            </div>
+                        </div>
+                        <div class="category-item">
+                            <div class="category-name">数据科学 <button class="action-btn edit">编辑</button></div>
+                            <div class="sub-cats">
+                                <span class="sub-cat">数据分析</span><span class="sub-cat">机器学习</span><span class="sub-cat">深度学习</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                area.innerHTML = `
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Python基础入门</span>
+                                <div class="card-actions">
+                                    <button class="action-btn edit">编辑</button>
+                                    <button class="action-btn delete">删除</button>
+                                </div>
+                            </div>
+                            <div class="course-item">
+                                <div class="course-img">Python</div>
+                                <div class="course-info">
+                                    <div class="course-name">Python基础入门</div>
+                                    <div class="course-desc">零基础学习Python编程</div>
+                                    <div class="course-hot">火热指数: 98</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">JavaWeb开发</span>
+                                <div class="card-actions">
+                                    <button class="action-btn edit">编辑</button>
+                                    <button class="action-btn delete">删除</button>
+                                </div>
+                            </div>
+                            <div class="course-item">
+                                <div class="course-img" style="background: linear-gradient(135deg, #52c41a, #1890ff);">Java</div>
+                                <div class="course-info">
+                                    <div class="course-name">JavaWeb开发</div>
+                                    <div class="course-desc">完整掌握JavaWeb技术</div>
+                                    <div class="course-hot">火热指数: 95</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        function showAddModal() { document.getElementById('add-modal').classList.add('active'); }
+        function showEditModal() { document.getElementById('add-modal').classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function saveData() { alert('保存成功'); closeModal('add-modal'); }
+    </script>
+</body>
+</html>

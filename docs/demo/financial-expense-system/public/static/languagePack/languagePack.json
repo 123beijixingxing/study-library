@@ -1,0 +1,12 @@
+{
+  "describe": "该字段为此json模块描述--无需翻译，zh对象--为页面的各个模块中文字，单词，文段内容等，en对象--为页面的各个模块英文字，单词，文段内容等",
+  "key": "tk",
+  "name": "languagePack",
+  "success": true,
+  "errCode": 0,
+  "msg": "success",
+  "data": {
+    "zh": {},
+    "en": {}
+  }
+}

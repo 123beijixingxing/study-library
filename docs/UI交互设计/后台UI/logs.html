@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>学习通后台 - 日志管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 240px; background: #001529; color: white; position: fixed; height: 100vh; }
+        .logo { height: 64px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .logo span { color: #00d9ff; }
+        .menu-item { padding: 14px 24px; cursor: pointer; color: #ffffff80; display: flex; align-items: center; gap: 12px; }
+        .menu-item:hover, .menu-item.active { background: #ffffff10; color: white; }
+        .menu-item.active { border-left: 3px solid #00d9ff; }
+        .main { flex: 1; margin-left: 240px; }
+        .header { height: 64px; background: white; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+        .content { padding: 24px; }
+        .tabs { display: flex; gap: 16px; margin-bottom: 24px; }
+        .tab { padding: 10px 20px; background: white; border: none; border-radius: 8px; cursor: pointer; }
+        .tab.active { background: #00d9ff; color: white; }
+        .toolbar { background: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; display: flex; gap: 12px; }
+        .search-input { padding: 8px 16px; border: 1px solid #d9d9d9; border-radius: 8px; width: 200px; }
+        select { padding: 8px; border: 1px solid #d9d9d9; border-radius: 8px; }
+        .table-card { background: white; border-radius: 12px; padding: 24px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        th { background: #fafafa; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo"><span>学习通</span>后台</div>
+            <nav class="menu">
+                <div class="menu-item" onclick="location.href='dashboard.html'">📊 仪表盘</div>
+                <div class="menu-item" onclick="location.href='user.html'">👥 用户管理</div>
+                <div class="menu-item" onclick="location.href='home-manage.html'">🏠 首页管理</div>
+                <div class="menu-item" onclick="location.href='course.html'">📚 课程管理</div>
+                <div class="menu-item" onclick="location.href='garden-manage.html'">🌳 园地管理</div>
+                <div class="menu-item" onclick="location.href='member.html'">👑 会员管理</div>
+                <div class="menu-item" onclick="location.href='system.html'">⚙️ 系统管理</div>
+                <div class="menu-item" onclick="location.href='statistics.html'">📈 数据统计</div>
+                <div class="menu-item active" onclick="location.href='logs.html'">📝 日志管理</div>
+            </nav>
+        </aside>
+        <main class="main">
+            <header class="header"><div class="header-title">日志管理</div></header>
+            <div class="content">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(this, 'operation')">操作日志</button>
+                    <button class="tab" onclick="switchTab(this, 'login')">登录日志</button>
+                </div>
+                <div class="toolbar">
+                    <input type="text" class="search-input" placeholder="搜索...">
+                    <select><option>全部类型</option><option>新增</option><option>编辑</option><option>删除</option></select>
+                    <input type="date" class="search-input"> - <input type="date" class="search-input">
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead id="log-thead">
+                            <tr><th>操作时间</th><th>操作人</th><th>操作类型</th><th>操作内容</th><th>IP地址</th></tr>
+                        </thead>
+                        <tbody id="log-tbody">
+                            <tr><td>2026-03-06 10:30:25</td><td>管理员</td><td>新增</td><td>添加用户: zhangsan</td><td>192.168.1.100</td></tr>
+                            <tr><td>2026-03-06 10:25:18</td><td>管理员</td><td>编辑</td><td>修改课程: Python基础入门</td><td>192.168.1.100</td></tr>
+                            <tr><td>2026-03-06 10:20:05</td><td>管理员</td><td>删除</td><td>删除课程分类: 测试分类</td><td>192.168.1.100</td></tr>
+                            <tr><td>2026-03-06 10:15:30</td><td>管理员</td><td>审核</td><td>审核通过用户注册</td><td>192.168.1.100</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        function switchTab(btn, type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const thead = document.getElementById('log-thead');
+            const tbody = document.getElementById('log-tbody');
+            if (type === 'login') {
+                thead.innerHTML = '<tr><th>登录时间</th><th>用户名</th><th>登录方式</th><th>IP地址</th><th>登录状态</th></tr>';
+                tbody.innerHTML = '<tr><td>2026-03-06 10:30:25</td><td>管理员</td><td>密码登录</td><td>192.168.1.100</td><td><span style="color:#52c41a">成功</span></td></tr><tr><td>2026-03-06 09:15:10</td><td>管理员</td><td>密码登录</td><td>192.168.1.100</td><td><span style="color:#52c41a">成功</span></td></tr>';
+            } else {
+                thead.innerHTML = '<tr><th>操作时间</th><th>操作人</th><th>操作类型</th><th>操作内容</th><th>IP地址</th></tr>';
+                tbody.innerHTML = '<tr><td>2026-03-06 10:30:25</td><td>管理员</td><td>新增</td><td>添加用户: zhangsan</td><td>192.168.1.100</td></tr>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "学习通后台管理系统"
+  },
+  "layout": {
+    "home": "后台首页",
+    "expandMenu": "展开菜单",
+    "collapseMenu": "收起菜单",
+    "logout": "退出登录",
+    "language": "语言"
+  },
+  "login": {
+    "heroTitle": "学习通后台管理系统",
+    "heroDesc": "覆盖用户、课程、园地、会员、消息、客服、系统配置、统计与日志的统一运营后台。",
+    "title": "管理员登录",
+    "subtitle": "使用后台账号进入控制台",
+    "username": "用户名",
+    "password": "密码",
+    "rememberMe": "记住我",
+    "submit": "登录后台"
+  },
+  "menu": {
+    "dashboard": "仪表盘",
+    "userManage": "用户管理",
+    "homeManage": "首页管理",
+    "courseManage": "课程管理",
+    "gardenManage": "园地管理",
+    "memberManage": "会员管理",
+    "memberPackageManage": "会员套餐",
+    "growthRuleManage": "成长规则",
+    "messageManage": "消息管理",
+    "messageTemplateManage": "消息模板",
+    "serviceManage": "客服管理",
+    "systemManage": "系统管理",
+    "questionBankManage": "题库管理",
+    "practicePaperManage": "练习试卷",
+    "reportAudit": "举报审核",
+    "searchOperationManage": "搜索运营",
+    "recommendSlotManage": "推荐位配置",
+    "sensitiveWordManage": "敏感词管理",
+    "statistics": "数据统计",
+    "logs": "日志管理"
+  }
+}

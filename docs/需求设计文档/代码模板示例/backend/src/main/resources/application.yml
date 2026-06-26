@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: study-library-api-skeleton
+
+logging:
+  level:
+    root: info
+    com.studylib: debug

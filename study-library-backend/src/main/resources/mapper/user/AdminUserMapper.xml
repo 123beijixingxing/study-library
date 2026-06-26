@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.user.mapper.AdminUserMapper">
+
+  <resultMap id="AdminUserResultMap" type="com.studylib.modules.user.entity.AdminUserEntity">
+    <id column="id" property="id" />
+    <result column="username" property="username" />
+    <result column="password" property="password" />
+    <result column="email" property="email" />
+    <result column="phone" property="phone" />
+    <result column="role" property="role" />
+    <result column="status" property="status" />
+    <result column="register_time" property="registerTime" />
+    <result column="member_level" property="memberLevel" />
+    <result column="study_record_count" property="studyRecordCount" />
+    <result column="favorite_count" property="favoriteCount" />
+    <result column="last_login_time" property="lastLoginTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <sql id="AdminUserColumns">
+    id, username, password, email, phone, role, status, register_time, member_level, study_record_count, favorite_count, last_login_time,
+    created_at, updated_at, created_by, updated_by, deleted
+  </sql>
+
+  <select id="selectById" resultMap="AdminUserResultMap">
+    select <include refid="AdminUserColumns" />
+    from admin_users
+    where id = #{id}
+      and deleted = false
+  </select>
+
+  <select id="selectByUsername" resultMap="AdminUserResultMap">
+    select <include refid="AdminUserColumns" />
+    from admin_users
+    where username = #{username}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from admin_users
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (username like concat('%', #{keyword}, '%') or email like concat('%', #{keyword}, '%') or phone like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="role != null and role != '' and role != 'all'">
+        and role = #{role}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="AdminUserResultMap">
+    select <include refid="AdminUserColumns" />
+    from admin_users
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (username like concat('%', #{keyword}, '%') or email like concat('%', #{keyword}, '%') or phone like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="role != null and role != '' and role != 'all'">
+        and role = #{role}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into admin_users (
+      username, password, email, phone, role, status, register_time, member_level, study_record_count, favorite_count, last_login_time,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{username}, #{password}, #{email}, #{phone}, #{role}, #{status}, #{registerTime}, #{memberLevel}, #{studyRecordCount}, #{favoriteCount}, #{lastLoginTime},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update admin_users
+    set username = #{username},
+        password = #{password},
+        email = #{email},
+        phone = #{phone},
+        role = #{role},
+        status = #{status},
+        register_time = #{registerTime},
+        member_level = #{memberLevel},
+        study_record_count = #{studyRecordCount},
+        favorite_count = #{favoriteCount},
+        last_login_time = #{lastLoginTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="updateStatus">
+    update admin_users
+    set status = #{status},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update admin_users
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+</mapper>

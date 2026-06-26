@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.member.mapper.StudyRecordMapper">
+
+  <resultMap id="StudyRecordResultMap" type="com.studylib.modules.member.entity.StudyRecordEntity">
+    <id column="record_id" property="recordId" />
+    <result column="username" property="username" />
+    <result column="course_name" property="courseName" />
+    <result column="progress_percent" property="progressPercent" />
+    <result column="last_study_time" property="lastStudyTime" />
+    <result column="status" property="status" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="StudyRecordResultMap">
+    select record_id, username, course_name, progress_percent, last_study_time, status
+    from study_records
+    where record_id = #{recordId}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from study_records
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (username like concat('%', #{keyword}, '%') or course_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="StudyRecordResultMap">
+    select record_id, username, course_name, progress_percent, last_study_time, status
+    from study_records
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (username like concat('%', #{keyword}, '%') or course_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by record_id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <update id="deleteById">
+    update study_records
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where record_id = #{recordId}
+      and deleted = false
+  </update>
+</mapper>

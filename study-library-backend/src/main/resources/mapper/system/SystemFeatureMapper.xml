@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.system.mapper.SystemFeatureMapper">
+
+  <resultMap id="SystemFeatureResultMap" type="com.studylib.modules.system.entity.SystemFeatureEntity">
+    <id column="code" property="code" />
+    <result column="name" property="name" />
+    <result column="enabled" property="enabled" />
+    <result column="description" property="description" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectByCode" resultMap="SystemFeatureResultMap">
+    select code, name, enabled, description, created_at, updated_at, created_by, updated_by, deleted
+    from system_features
+    where code = #{code}
+      and deleted = false
+  </select>
+
+  <select id="selectList" resultMap="SystemFeatureResultMap">
+    select code, name, enabled, description, created_at, updated_at, created_by, updated_by, deleted
+    from system_features
+    where deleted = false
+    order by code asc
+  </select>
+
+  <update id="update">
+    update system_features
+    set name = #{name},
+        enabled = #{enabled},
+        description = #{description},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where code = #{code}
+      and deleted = false
+  </update>
+</mapper>

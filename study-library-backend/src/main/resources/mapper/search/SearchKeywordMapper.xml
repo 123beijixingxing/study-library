@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.search.mapper.SearchKeywordMapper">
+
+  <resultMap id="SearchKeywordResultMap" type="com.studylib.modules.search.entity.SearchKeywordEntity">
+    <id column="keyword_id" property="keywordId" />
+    <result column="keyword" property="keyword" />
+    <result column="scene" property="scene" />
+    <result column="sort_no" property="sortNo" />
+    <result column="status" property="status" />
+    <result column="effect_time_range" property="effectTimeRange" />
+    <result column="synonym_text" property="synonymText" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="SearchKeywordResultMap">
+    select keyword_id, keyword, scene, sort_no, status, effect_time_range, synonym_text, created_at, updated_at, created_by, updated_by, deleted
+    from search_operations
+    where keyword_id = #{keywordId}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from search_operations
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and keyword like concat('%', #{keyword}, '%')
+      </if>
+      <if test="scene != null and scene != '' and scene != 'all'">
+        and scene = #{scene}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="SearchKeywordResultMap">
+    select keyword_id, keyword, scene, sort_no, status, effect_time_range, synonym_text, created_at, updated_at, created_by, updated_by, deleted
+    from search_operations
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and keyword like concat('%', #{keyword}, '%')
+      </if>
+      <if test="scene != null and scene != '' and scene != 'all'">
+        and scene = #{scene}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by sort_no asc, keyword_id asc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="keywordId">
+    insert into search_operations (
+      keyword, scene, sort_no, status, effect_time_range, synonym_text,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{keyword}, #{scene}, #{sortNo}, #{status}, #{effectTimeRange}, #{synonymText},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update search_operations
+    set keyword = #{keyword},
+        scene = #{scene},
+        sort_no = #{sortNo},
+        status = #{status},
+        effect_time_range = #{effectTimeRange},
+        synonym_text = #{synonymText},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where keyword_id = #{keywordId}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update search_operations
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where keyword_id = #{keywordId}
+      and deleted = false
+  </update>
+</mapper>

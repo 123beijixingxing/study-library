@@ -1,0 +1,274 @@
+{
+  "info": {
+    "name": "学习通接口联调草案",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Draft Postman collection generated from Study Library interface docs."
+  },
+  "variable": [
+    { "key": "appBaseUrl", "value": "/api/app/v1" },
+    { "key": "adminBaseUrl", "value": "/api/admin/v1" },
+    { "key": "appToken", "value": "app_access_token_xxx" },
+    { "key": "adminToken", "value": "admin_access_token_xxx" }
+  ],
+  "item": [
+    {
+      "name": "App Auth",
+      "item": [
+        {
+          "name": "User Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"study_user_01\",\n  \"password\": \"123456\",\n  \"rememberMe\": true\n}"
+            },
+            "url": "{{appBaseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "User Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"study_user_02\",\n  \"password\": \"123456\",\n  \"confirmPassword\": \"123456\",\n  \"email\": \"user02@example.com\",\n  \"phone\": \"13800000002\"\n}"
+            },
+            "url": "{{appBaseUrl}}/auth/register"
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Course",
+      "item": [
+        {
+          "name": "Get Course Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" }
+            ],
+            "url": "{{appBaseUrl}}/courses/2001"
+          }
+        },
+        {
+          "name": "Create Course Evaluation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 5,\n  \"content\": \"课程讲解清晰，适合入门。\"\n}"
+            },
+            "url": "{{appBaseUrl}}/courses/2001/evaluations"
+          }
+        },
+        {
+          "name": "Search Courses",
+          "request": {
+            "method": "GET",
+            "url": "{{appBaseUrl}}/search?keyword=python&searchType=course&pageNum=1&pageSize=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Practice",
+      "item": [
+        {
+          "name": "Get Practice Paper Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" }
+            ],
+            "url": "{{appBaseUrl}}/practice/papers/4001"
+          }
+        },
+        {
+          "name": "Submit Practice Paper",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questionAnswerList\": [\n    { \"questionId\": 50001, \"userAnswer\": \"B\" },\n    { \"questionId\": 50002, \"userAnswer\": \"A,C\" }\n  ],\n  \"costSeconds\": 480\n}"
+            },
+            "url": "{{appBaseUrl}}/practice/papers/4001/submit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Message And Garden",
+      "item": [
+        {
+          "name": "Mark Message Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" }
+            ],
+            "url": "{{appBaseUrl}}/me/messages/7001/read"
+          }
+        },
+        {
+          "name": "Report Garden Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{appToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportReason\": \"垃圾信息\",\n  \"reportRemark\": \"存在明显广告导流内容\"\n}"
+            },
+            "url": "{{appBaseUrl}}/garden/contents/3001/report"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Auth",
+      "item": [
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Course",
+      "item": [
+        {
+          "name": "Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseName\": \"Python 入门基础\",\n  \"summary\": \"帮助初学者系统掌握 Python 基础能力。\",\n  \"coverUrl\": \"https://cdn.example.com/course/python-basic.png\",\n  \"categoryId\": 11,\n  \"hotScore\": 98\n}"
+            },
+            "url": "{{adminBaseUrl}}/courses"
+          }
+        },
+        {
+          "name": "Get Question Banks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{adminBaseUrl}}/question-banks?pageNum=1&pageSize=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Message And Config",
+      "item": [
+        {
+          "name": "Create Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"课程更新提醒\",\n  \"messageType\": \"system\",\n  \"content\": \"Python 入门基础已更新第二章内容，请及时学习。\",\n  \"receiverType\": \"user\",\n  \"receiverIds\": [10001, 10002]\n}"
+            },
+            "url": "{{adminBaseUrl}}/messages"
+          }
+        },
+        {
+          "name": "Save Recommend Slot",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slotName\": \"首页顶部推荐位\",\n  \"pageCode\": \"home_top_banner\",\n  \"resourceType\": \"course\",\n  \"targetId\": 2001,\n  \"sortNo\": 1\n}"
+            },
+            "url": "{{adminBaseUrl}}/recommend-slots"
+          }
+        },
+        {
+          "name": "Save Message Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templateName\": \"会员到期提醒模板\",\n  \"messageType\": \"service\",\n  \"titleTemplate\": \"您的会员将于 {{expireDate}} 到期\",\n  \"contentTemplate\": \"尊敬的 {{userName}}，您的会员将在 {{expireDate}} 到期，请及时续费。\",\n  \"channelList\": [\"site_message\", \"sms\"]\n}"
+            },
+            "url": "{{adminBaseUrl}}/message-templates"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Report And Statistics",
+      "item": [
+        {
+          "name": "Handle Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"handleResult\": \"delete_content\",\n  \"handleRemark\": \"内容确认违规，已删除并记录处理结果。\"\n}"
+            },
+            "url": "{{adminBaseUrl}}/reports/9001/handle"
+          }
+        },
+        {
+          "name": "Get User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{adminBaseUrl}}/statistics/users?dateType=7d"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/study_library?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    com.studylib: warn
+
+app:
+  env: prod
+  jwt:
+    secret: ${JWT_SECRET:study-library-backend-prod-jwt-secret-key-2026-secure}

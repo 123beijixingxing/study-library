@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.log.mapper.OperationLogMapper">
+
+  <resultMap id="OperationLogResultMap" type="com.studylib.modules.log.entity.OperationLogEntity">
+    <id column="id" property="id" />
+    <result column="operate_time" property="operateTime" />
+    <result column="operator_name" property="operatorName" />
+    <result column="operation_module" property="operationModule" />
+    <result column="operation_type" property="operationType" />
+    <result column="operation_content" property="operationContent" />
+    <result column="ip" property="ip" />
+  </resultMap>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from operation_logs
+    <where>
+      <if test="keyword != null and keyword != ''">
+        and (
+          operator_name like concat('%', #{keyword}, '%')
+          or operation_module like concat('%', #{keyword}, '%')
+          or operation_content like concat('%', #{keyword}, '%')
+        )
+      </if>
+      <if test="operationType != null and operationType != '' and operationType != 'all'">
+        and operation_type = #{operationType}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="OperationLogResultMap">
+    select id, operate_time, operator_name, operation_module, operation_type, operation_content, ip
+    from operation_logs
+    <where>
+      <if test="keyword != null and keyword != ''">
+        and (
+          operator_name like concat('%', #{keyword}, '%')
+          or operation_module like concat('%', #{keyword}, '%')
+          or operation_content like concat('%', #{keyword}, '%')
+        )
+      </if>
+      <if test="operationType != null and operationType != '' and operationType != 'all'">
+        and operation_type = #{operationType}
+      </if>
+    </where>
+    order by id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into operation_logs (operate_time, operator_name, operation_module, operation_type, operation_content, ip)
+    values (#{operateTime}, #{operatorName}, #{operationModule}, #{operationType}, #{operationContent}, #{ip})
+  </insert>
+</mapper>

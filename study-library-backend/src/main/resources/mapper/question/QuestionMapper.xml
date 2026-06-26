@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.question.mapper.QuestionMapper">
+
+  <resultMap id="QuestionResultMap" type="com.studylib.modules.question.entity.QuestionEntity">
+    <id column="question_id" property="questionId" />
+    <result column="bank_id" property="bankId" />
+    <result column="chapter_name" property="chapterName" />
+    <result column="template_code" property="templateCode" />
+    <result column="version_group_id" property="versionGroupId" />
+    <result column="version_no" property="versionNo" />
+    <result column="version_remark" property="versionRemark" />
+    <result column="source_action" property="sourceAction" />
+    <result column="source_question_id" property="sourceQuestionId" />
+    <result column="source_version_no" property="sourceVersionNo" />
+    <result column="title" property="title" />
+    <result column="question_type" property="questionType" />
+    <result column="difficulty" property="difficulty" />
+    <result column="status" property="status" />
+    <result column="update_time" property="updateTime" />
+    <result column="answer_text" property="answerText" />
+    <result column="analysis_text" property="analysisText" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <sql id="QuestionColumns">
+    question_id, bank_id, chapter_name, template_code, version_group_id, version_no, version_remark,
+    source_action, source_question_id, source_version_no, title, question_type, difficulty, status,
+    update_time, answer_text, analysis_text, created_at, updated_at, created_by, updated_by, deleted
+  </sql>
+
+  <select id="countAll" resultType="java.lang.Long">
+    select count(1)
+    from questions
+    where deleted = false
+  </select>
+
+  <select id="countByBankId" resultType="java.lang.Long">
+    select count(1)
+    from questions
+    where bank_id = #{bankId}
+      and deleted = false
+  </select>
+
+  <select id="selectByQuestionId" resultMap="QuestionResultMap">
+    select <include refid="QuestionColumns" />
+    from questions
+    where question_id = #{questionId}
+      and deleted = false
+  </select>
+
+  <select id="selectByQuery" resultMap="QuestionResultMap">
+    select <include refid="QuestionColumns" />
+    from questions
+    <where>
+      and deleted = false
+      <if test="bankId != null and bankId &gt; 0">
+        and bank_id = #{bankId}
+      </if>
+      <if test="keyword != null and keyword != ''">
+        and (title like concat('%', #{keyword}, '%')
+          or version_remark like concat('%', #{keyword}, '%')
+          or chapter_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="questionType != null and questionType != '' and questionType != 'all'">
+        and question_type = #{questionType}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+      <if test="templateCode != null and templateCode != '' and templateCode != 'all'">
+        and template_code = #{templateCode}
+      </if>
+      <if test="versionGroupId != null and versionGroupId != ''">
+        and version_group_id like concat('%', #{versionGroupId}, '%')
+      </if>
+    </where>
+    order by question_id desc
+  </select>
+
+  <select id="selectByVersionGroupId" resultMap="QuestionResultMap">
+    select <include refid="QuestionColumns" />
+    from questions
+    where version_group_id = #{versionGroupId}
+      and deleted = false
+    order by version_no desc, question_id desc
+  </select>
+
+  <select id="selectLatestByBankId" resultMap="QuestionResultMap">
+    select q.question_id, q.bank_id, q.chapter_name, q.template_code, q.version_group_id, q.version_no, q.version_remark,
+           q.source_action, q.source_question_id, q.source_version_no, q.title, q.question_type, q.difficulty, q.status,
+           q.update_time, q.answer_text, q.analysis_text, q.created_at, q.updated_at, q.created_by, q.updated_by, q.deleted
+    from questions q
+    inner join (
+      select version_group_id, max(version_no) as max_version_no
+      from questions
+      where bank_id = #{bankId}
+        and deleted = false
+      group by version_group_id
+    ) latest on latest.version_group_id = q.version_group_id and latest.max_version_no = q.version_no
+    where q.bank_id = #{bankId}
+      and q.deleted = false
+    order by q.question_id desc
+    limit #{limit}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="questionId">
+    insert into questions (
+      bank_id, chapter_name, template_code, version_group_id, version_no, version_remark,
+      source_action, source_question_id, source_version_no, title, question_type, difficulty,
+      status, update_time, answer_text, analysis_text, created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{bankId}, #{chapterName}, #{templateCode}, #{versionGroupId}, #{versionNo}, #{versionRemark},
+      #{sourceAction}, #{sourceQuestionId}, #{sourceVersionNo}, #{title}, #{questionType}, #{difficulty},
+      #{status}, #{updateTime}, #{answerText}, #{analysisText}, #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update questions
+    set bank_id = #{bankId},
+        chapter_name = #{chapterName},
+        template_code = #{templateCode},
+        version_group_id = #{versionGroupId},
+        version_no = #{versionNo},
+        version_remark = #{versionRemark},
+        source_action = #{sourceAction},
+        source_question_id = #{sourceQuestionId},
+        source_version_no = #{sourceVersionNo},
+        title = #{title},
+        question_type = #{questionType},
+        difficulty = #{difficulty},
+        status = #{status},
+        update_time = #{updateTime},
+        answer_text = #{answerText},
+        analysis_text = #{analysisText},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where question_id = #{questionId}
+      and deleted = false
+  </update>
+
+  <select id="selectMaxVersionNoByVersionGroupId" resultType="java.lang.Long">
+    select max(version_no)
+    from questions
+    where version_group_id = #{versionGroupId}
+      and deleted = false
+  </select>
+
+  <update id="deleteByQuestionId">
+    update questions
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where question_id = #{questionId}
+      and deleted = false
+  </update>
+</mapper>

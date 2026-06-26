@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.member.mapper.MemberPackageMapper">
+
+  <resultMap id="MemberPackageResultMap" type="com.studylib.modules.member.entity.MemberPackageEntity">
+    <id column="package_id" property="packageId" />
+    <result column="package_name" property="packageName" />
+    <result column="price" property="price" />
+    <result column="duration_days" property="durationDays" />
+    <result column="benefit_list" property="benefitList" typeHandler="com.studylib.common.persistence.typehandler.CommaSeparatedStringListTypeHandler" />
+    <result column="status" property="status" />
+    <result column="sort_no" property="sortNo" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="MemberPackageResultMap">
+    select package_id, package_name, price, duration_days, benefit_list, status, sort_no
+    from member_packages
+    where package_id = #{packageId}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from member_packages
+    <where>
+      and deleted = false
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="MemberPackageResultMap">
+    select package_id, package_name, price, duration_days, benefit_list, status, sort_no
+    from member_packages
+    <where>
+      and deleted = false
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by sort_no asc, package_id asc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="packageId">
+    insert into member_packages (
+      package_name, price, duration_days, benefit_list, status, sort_no,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{packageName}, #{price}, #{durationDays}, #{benefitList, typeHandler=com.studylib.common.persistence.typehandler.CommaSeparatedStringListTypeHandler}, #{status}, #{sortNo},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update member_packages
+    set package_name = #{packageName},
+        price = #{price},
+        duration_days = #{durationDays},
+        benefit_list = #{benefitList, typeHandler=com.studylib.common.persistence.typehandler.CommaSeparatedStringListTypeHandler},
+        status = #{status},
+        sort_no = #{sortNo},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where package_id = #{packageId}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update member_packages
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where package_id = #{packageId}
+      and deleted = false
+  </update>
+</mapper>

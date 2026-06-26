@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>学习通项目 - UI原型导航</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { color: white; text-align: center; margin-bottom: 40px; font-size: 32px; }
+        .section { background: white; border-radius: 16px; padding: 32px; margin-bottom: 24px; }
+        .section h2 { color: #333; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 12px; }
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .link-card { display: block; padding: 20px; background: #f8f9fa; border-radius: 12px; text-decoration: none; transition: all 0.3s; border: 2px solid transparent; }
+        .link-card:hover { transform: translateY(-4px); border-color: #667eea; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        .link-card .icon { font-size: 32px; margin-bottom: 12px; }
+        .link-card .title { color: #333; font-weight: 600; font-size: 16px; }
+        .link-card .desc { color: #666; font-size: 13px; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 学习通项目 - UI原型导航</h1>
+        
+        <div class="section">
+            <h2>🏠 前台项目</h2>
+            <div class="link-grid">
+                <a href="前台UI/login.html" class="link-card">
+                    <div class="icon">🔐</div>
+                    <div class="title">登录页面</div>
+                    <div class="desc">用户登录、注册、忘记密码</div>
+                </a>
+                <a href="前台UI/home.html" class="link-card">
+                    <div class="icon">🏠</div>
+                    <div class="title">首页</div>
+                    <div class="desc">课程推荐、热门课程、最新课程</div>
+                </a>
+                <a href="前台UI/study.html" class="link-card">
+                    <div class="icon">📚</div>
+                    <div class="title">学习页</div>
+                    <div class="desc">课程分类、一级/二级分类</div>
+                </a>
+                <a href="前台UI/garden.html" class="link-card">
+                    <div class="icon">🌳</div>
+                    <div class="title">园地页</div>
+                    <div class="desc">火热、分享、收藏内容</div>
+                </a>
+                <a href="前台UI/profile.html" class="link-card">
+                    <div class="icon">👤</div>
+                    <div class="title">我的页面</div>
+                    <div class="desc">会员中心、个人信息、学习记录</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>⚙️ 后台管理系统</h2>
+            <div class="link-grid">
+                <a href="后台UI/login.html" class="link-card">
+                    <div class="icon">🔐</div>
+                    <div class="title">登录页面</div>
+                    <div class="desc">管理员登录</div>
+                </a>
+                <a href="后台UI/dashboard.html" class="link-card">
+                    <div class="icon">📊</div>
+                    <div class="title">仪表盘</div>
+                    <div class="desc">数据概览、统计图表</div>
+                </a>
+                <a href="后台UI/user.html" class="link-card">
+                    <div class="icon">👥</div>
+                    <div class="title">用户管理</div>
+                    <div class="desc">用户列表、添加/编辑用户</div>
+                </a>
+                <a href="后台UI/home-manage.html" class="link-card">
+                    <div class="icon">🏠</div>
+                    <div class="title">首页管理</div>
+                    <div class="desc">课程推荐、热门课程、分类管理</div>
+                </a>
+                <a href="后台UI/course.html" class="link-card">
+                    <div class="icon">📚</div>
+                    <div class="title">课程管理</div>
+                    <div class="desc">课程列表、上下架管理</div>
+                </a>
+                <a href="后台UI/garden-manage.html" class="link-card">
+                    <div class="icon">🌳</div>
+                    <div class="title">园地管理</div>
+                    <div class="desc">内容审核、收藏管理</div>
+                </a>
+                <a href="后台UI/member.html" class="link-card">
+                    <div class="icon">👑</div>
+                    <div class="title">会员管理</div>
+                    <div class="desc">会员列表、会员状态</div>
+                </a>
+                <a href="后台UI/system.html" class="link-card">
+                    <div class="icon">⚙️</div>
+                    <div class="title">系统管理</div>
+                    <div class="desc">系统信息、功能配置</div>
+                </a>
+                <a href="后台UI/statistics.html" class="link-card">
+                    <div class="icon">📈</div>
+                    <div class="title">数据统计</div>
+                    <div class="desc">用户、课程、活跃度统计</div>
+                </a>
+                <a href="后台UI/logs.html" class="link-card">
+                    <div class="icon">📝</div>
+                    <div class="title">日志管理</div>
+                    <div class="desc">操作日志、登录日志</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

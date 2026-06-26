@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.message.mapper.MessageTemplateMapper">
+
+  <resultMap id="MessageTemplateResultMap" type="com.studylib.modules.message.entity.MessageTemplateEntity">
+    <id column="template_id" property="templateId" />
+    <result column="template_name" property="templateName" />
+    <result column="message_type" property="messageType" />
+    <result column="title_template" property="titleTemplate" />
+    <result column="content_template" property="contentTemplate" />
+    <result column="channel_list" property="channelList" typeHandler="com.studylib.common.persistence.typehandler.CommaSeparatedStringListTypeHandler" />
+    <result column="status" property="status" />
+    <result column="update_time" property="updateTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="MessageTemplateResultMap">
+    select template_id, template_name, message_type, title_template, content_template, channel_list, status, update_time,
+           created_at, updated_at, created_by, updated_by, deleted
+    from message_templates
+    where template_id = #{templateId}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from message_templates
+    <where>
+      and deleted = false
+      <if test="messageType != null and messageType != '' and messageType != 'all'">
+        and message_type = #{messageType}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="MessageTemplateResultMap">
+    select template_id, template_name, message_type, title_template, content_template, channel_list, status, update_time,
+           created_at, updated_at, created_by, updated_by, deleted
+    from message_templates
+    <where>
+      and deleted = false
+      <if test="messageType != null and messageType != '' and messageType != 'all'">
+        and message_type = #{messageType}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by template_id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="templateId">
+    insert into message_templates (
+      template_name, message_type, title_template, content_template, channel_list, status, update_time,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{templateName},
+      #{messageType},
+      #{titleTemplate},
+      #{contentTemplate},
+      #{channelList, typeHandler=com.studylib.common.persistence.typehandler.CommaSeparatedStringListTypeHandler},
+      #{status},
+      #{updateTime},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update message_templates
+    set template_name = #{templateName},
+        message_type = #{messageType},
+        title_template = #{titleTemplate},
+        content_template = #{contentTemplate},
+        channel_list = #{channelList, typeHandler=com.studylib.common.persistence.typehandler.CommaSeparatedStringListTypeHandler},
+        status = #{status},
+        update_time = #{updateTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where template_id = #{templateId}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update message_templates
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where template_id = #{templateId}
+      and deleted = false
+  </update>
+</mapper>

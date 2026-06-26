@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.practice.mapper.PracticePaperAnalysisMapper">
+
+  <resultMap id="PracticePaperAnalysisResultMap" type="com.studylib.modules.practice.entity.PracticePaperAnalysisEntity">
+    <id column="paper_id" property="paperId" />
+    <result column="total_submit_count" property="totalSubmitCount" />
+    <result column="pass_rate" property="passRate" />
+    <result column="score_distribution_json" property="scoreDistributionJson" />
+    <result column="trend_json" property="trendJson" />
+    <result column="hourly_heat_json" property="hourlyHeatJson" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectByPaperId" resultMap="PracticePaperAnalysisResultMap">
+    select paper_id, total_submit_count, pass_rate, score_distribution_json, trend_json, hourly_heat_json,
+           created_at, updated_at, created_by, updated_by, deleted
+    from practice_paper_analysis
+    where paper_id = #{paperId}
+      and deleted = false
+  </select>
+
+  <insert id="insert">
+    insert into practice_paper_analysis (
+      paper_id, total_submit_count, pass_rate, score_distribution_json, trend_json, hourly_heat_json,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{paperId}, #{totalSubmitCount}, #{passRate}, #{scoreDistributionJson}, #{trendJson}, #{hourlyHeatJson},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update practice_paper_analysis
+    set total_submit_count = #{totalSubmitCount},
+        pass_rate = #{passRate},
+        score_distribution_json = #{scoreDistributionJson},
+        trend_json = #{trendJson},
+        hourly_heat_json = #{hourlyHeatJson},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where paper_id = #{paperId}
+  </update>
+</mapper>

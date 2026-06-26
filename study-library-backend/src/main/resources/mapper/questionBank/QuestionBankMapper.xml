@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.questionBank.mapper.QuestionBankMapper">
+
+  <resultMap id="QuestionBankResultMap" type="com.studylib.modules.questionBank.entity.QuestionBankEntity">
+    <id column="id" property="id" />
+    <result column="bank_name" property="bankName" />
+    <result column="category_name" property="categoryName" />
+    <result column="question_count" property="questionCount" />
+    <result column="difficulty" property="difficulty" />
+    <result column="status" property="status" />
+    <result column="update_time" property="updateTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="QuestionBankResultMap">
+    select id, bank_name, category_name, question_count, difficulty, status, update_time, created_at, updated_at, created_by, updated_by, deleted
+    from question_banks
+    where id = #{id}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from question_banks
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (bank_name like concat('%', #{keyword}, '%') or category_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="QuestionBankResultMap">
+    select id, bank_name, category_name, question_count, difficulty, status, update_time, created_at, updated_at, created_by, updated_by, deleted
+    from question_banks
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (bank_name like concat('%', #{keyword}, '%') or category_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into question_banks (
+      bank_name, category_name, question_count, difficulty, status, update_time,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{bankName}, #{categoryName}, #{questionCount}, #{difficulty}, #{status}, #{updateTime},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update question_banks
+    set bank_name = #{bankName},
+        category_name = #{categoryName},
+        question_count = #{questionCount},
+        difficulty = #{difficulty},
+        status = #{status},
+        update_time = #{updateTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update question_banks
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+</mapper>

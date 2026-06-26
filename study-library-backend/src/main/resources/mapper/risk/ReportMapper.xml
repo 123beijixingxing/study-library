@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.risk.mapper.ReportMapper">
+
+  <resultMap id="ReportResultMap" type="com.studylib.modules.risk.entity.ReportEntity">
+    <id column="report_id" property="reportId" />
+    <result column="report_type" property="reportType" />
+    <result column="target_id" property="targetId" />
+    <result column="target_title" property="targetTitle" />
+    <result column="reporter_name" property="reporterName" />
+    <result column="status" property="status" />
+    <result column="report_time" property="reportTime" />
+    <result column="handle_result" property="handleResult" />
+    <result column="handle_remark" property="handleRemark" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="ReportResultMap">
+    select report_id, report_type, target_id, target_title, reporter_name, status, report_time, handle_result, handle_remark,
+           created_at, updated_at, created_by, updated_by, deleted
+    from reports
+    where report_id = #{reportId}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from reports
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (target_title like concat('%', #{keyword}, '%') or reporter_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="reportType != null and reportType != '' and reportType != 'all'">
+        and report_type = #{reportType}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="ReportResultMap">
+    select report_id, report_type, target_id, target_title, reporter_name, status, report_time, handle_result, handle_remark,
+           created_at, updated_at, created_by, updated_by, deleted
+    from reports
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (target_title like concat('%', #{keyword}, '%') or reporter_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="reportType != null and reportType != '' and reportType != 'all'">
+        and report_type = #{reportType}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by report_id asc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <update id="update">
+    update reports
+    set report_type = #{reportType},
+        target_id = #{targetId},
+        target_title = #{targetTitle},
+        reporter_name = #{reporterName},
+        status = #{status},
+        report_time = #{reportTime},
+        handle_result = #{handleResult},
+        handle_remark = #{handleRemark},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where report_id = #{reportId}
+      and deleted = false
+  </update>
+</mapper>

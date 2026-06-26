@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习通 - 首页</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; }
+        
+        /* 顶部导航 */
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: white; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 100; }
+        .header-left { flex: 6; display: flex; align-items: center; gap: 20px; }
+        .header-right { flex: 4; display: flex; justify-content: flex-end; align-items: center; gap: 16px; }
+        .hot-content { display: flex; gap: 12px; overflow: hidden; }
+        .hot-item { padding: 6px 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 16px; font-size: 12px; white-space: nowrap; cursor: pointer; transition: transform 0.3s; }
+        .hot-item:hover { transform: scale(1.05); }
+        .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: #f0f0f0; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.3s; }
+        .icon-btn:hover { background: #667eea; color: white; }
+        
+        /* 主内容区 */
+        .main { padding: 80px 20px 80px; }
+        
+        /* 标签切换 */
+        .tab-buttons { display: flex; gap: 12px; margin-bottom: 20px; background: white; padding: 16px; border-radius: 12px; }
+        .tab-btn { padding: 10px 20px; border: none; background: #f0f0f0; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        
+        /* 卡片网格 */
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .course-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); cursor: pointer; transition: all 0.3s; }
+        .course-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        .card-image { height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; }
+        .card-info { padding: 12px; position: relative; }
+        .card-info .name { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px; }
+        .card-info .desc { font-size: 12px; color: #666; margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .card-info .hot-index { position: absolute; bottom: 12px; right: 12px; font-size: 12px; color: #ff6b6b; }
+        .hot-badge { position: absolute; top: 8px; right: 8px; background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; }
+        
+        /* 底部导航 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: white; display: flex; align-items: center; justify-content: space-around; box-shadow: 0 -2px 8px rgba(0,0,0,0.1); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; color: #999; font-size: 12px; transition: all 0.3s; }
+        .nav-item.active { color: #667eea; }
+        .nav-item .icon { font-size: 20px; }
+        
+        /* 弹窗 */
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 400px; }
+        .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .modal-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; }
+        .modal-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-left">
+            <div class="hot-content">
+                <span class="hot-item">🔥 Python入门</span>
+                <span class="hot-item">🔥 Java进阶</span>
+                <span class="hot-item">🔥 Web开发</span>
+                <span class="hot-item">🔥 数据分析</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn" onclick="showSearch()" title="搜索">🔍</button>
+            <button class="icon-btn" onclick="showPractice()" title="练习">📝</button>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <!-- 标签按钮 -->
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab(this, 'recommend')">课程推荐</button>
+            <button class="tab-btn" onclick="switchTab(this, 'hot')">热门课程</button>
+            <button class="tab-btn" onclick="switchTab(this, 'latest')">最新课程</button>
+            <button class="tab-btn" onclick="switchTab(this, 'category')" onclick="location.href='study.html'">课程分类</button>
+        </div>
+
+        <!-- 卡片内容 -->
+        <div class="card-grid" id="card-container">
+            <!-- 课程推荐 -->
+            <div class="course-card">
+                <div class="card-image">
+                    <span class="hot-badge">推荐</span>
+                </div>
+                <div class="card-info">
+                    <div class="name">Python基础入门</div>
+                    <div class="desc">零基础学习Python编程</div>
+                    <div class="hot-index">🔥 98</div>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="card-image">
+                    <span class="hot-badge">推荐</span>
+                </div>
+                <div class="card-info">
+                    <div class="name">JavaWeb开发</div>
+                    <div class="desc">完整掌握JavaWeb技术</div>
+                    <div class="hot-index">🔥 95</div>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="card-image">
+                    <span class="hot-badge">推荐</span>
+                </div>
+                <div class="card-info">
+                    <div class="name">数据结构与算法</div>
+                    <div class="desc">提升编程思维</div>
+                    <div class="hot-index">🔥 92</div>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="card-image">
+                    <span class="hot-badge">推荐</span>
+                </div>
+                <div class="card-info">
+                    <div class="name">前端开发实战</div>
+                    <div class="desc">HTML/CSS/JS全面学习</div>
+                    <div class="hot-index">🔥 90</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="location.href='home.html'">
+            <span class="icon">🏠</span>
+            <span>首页</span>
+        </div>
+        <div class="nav-item" onclick="location.href='study.html'">
+            <span class="icon">📚</span>
+            <span>学习</span>
+        </div>
+        <div class="nav-item" onclick="location.href='garden.html'">
+            <span class="icon">🌳</span>
+            <span>园地</span>
+        </div>
+        <div class="nav-item" onclick="location.href='profile.html'">
+            <span class="icon">👤</span>
+            <span>我的</span>
+        </div>
+    </nav>
+
+    <!-- 搜索弹窗 -->
+    <div class="modal" id="search-modal">
+        <div class="modal-content">
+            <div class="modal-title">搜索课程</div>
+            <input type="text" class="modal-input" placeholder="请输入关键字...">
+            <button class="modal-btn" onclick="doSearch()">搜索</button>
+            <button class="modal-btn" style="background: #999; margin-top: 8px;" onclick="closeModal('search-modal')">取消</button>
+        </div>
+    </div>
+
+    <!-- 练习弹窗 -->
+    <div class="modal" id="practice-modal">
+        <div class="modal-content">
+            <div class="modal-title">开始练习</div>
+            <p style="margin-bottom: 16px; color: #666;">选择练习科目</p>
+            <button class="modal-btn">Python练习</button>
+            <button class="modal-btn" style="background: #52c41a; margin-top: 8px;">Java练习</button>
+            <button class="modal-btn" style="background: #faad14; margin-top: 8px;" onclick="closeModal('practice-modal')">取消</button>
+        </div>
+    </div>
+
+    <script>
+        // 切换标签
+        function switchTab(btn, type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const container = document.getElementById('card-container');
+            
+            if (type === 'recommend') {
+                container.innerHTML = `
+                    <div class="course-card"><div class="card-image"><span class="hot-badge">推荐</span></div><div class="card-info"><div class="name">Python基础入门</div><div class="desc">零基础学习Python编程</div><div class="hot-index">🔥 98</div></div></div>
+                    <div class="course-card"><div class="card-image"><span class="hot-badge">推荐</span></div><div class="card-info"><div class="name">JavaWeb开发</div><div class="desc">完整掌握JavaWeb技术</div><div class="hot-index">🔥 95</div></div></div>
+                    <div class="course-card"><div class="card-image"><span class="hot-badge">推荐</span></div><div class="card-info"><div class="name">数据结构与算法</div><div class="desc">提升编程思维</div><div class="hot-index">🔥 92</div></div></div>
+                    <div class="course-card"><div class="card-image"><span class="hot-badge">推荐</span></div><div class="card-info"><div class="name">前端开发实战</div><div class="desc">HTML/CSS/JS全面学习</div><div class="hot-index">🔥 90</div></div></div>
+                `;
+            } else if (type === 'hot') {
+                container.innerHTML = `
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #ff6b6b, #ffa500);"></div><div class="card-info"><div class="name">Vue3响应式原理</div><div class="desc">深入理解Vue3核心</div><div class="hot-index">🔥 99</div></div></div>
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #ff6b6b, #ffa500);"></div><div class="card-info"><div class="name">React Hooks精通</div><div class="desc">掌握React最新特性</div><div class="hot-index">🔥 97</div></div></div>
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #ff6b6b, #ffa500);"></div><div class="card-info"><div class="name">Node.js后端开发</div><div class="desc">全栈开发必学</div><div class="hot-index">🔥 96</div></div></div>
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #ff6b6b, #ffa500);"></div><div class="card-info"><div class="name">MySQL数据库</div><div class="desc">数据库从入门到精通</div><div class="hot-index">🔥 94</div></div></div>
+                `;
+            } else if (type === 'latest') {
+                container.innerHTML = `
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #52c41a, #1890ff);"></div><div class="card-info"><div class="name">AI大模型应用开发</div><div class="desc">2026最新技术</div><div class="hot-index">🔥 88</div></div></div>
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #52c41a, #1890ff);"></div><div class="card-info"><div class="name">Rust编程入门</div><div class="desc">系统级编程语言</div><div class="hot-index">🔥 85</div></div></div>
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #52c41a, #1890ff);"></div><div class="card-info"><div class="name">Go微服务架构</div><div class="desc">云原生时代必备</div><div class="hot-index">🔥 82</div></div></div>
+                    <div class="course-card"><div class="card-image" style="background: linear-gradient(135deg, #52c41a, #1890ff);"></div><div class="card-info"><div class="name">TypeScript进阶</div><div class="desc">类型安全的JavaScript</div><div class="hot-index">🔥 80</div></div></div>
+                `;
+            } else if (type === 'category') {
+                location.href = 'study.html';
+            }
+        }
+
+        function showSearch() { document.getElementById('search-modal').classList.add('active'); }
+        function showPractice() { document.getElementById('practice-modal').classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function doSearch() { alert('搜索功能'); closeModal('search-modal'); }
+    </script>
+</body>
+</html>

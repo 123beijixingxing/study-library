@@ -1,0 +1,30 @@
+{
+  "describe": "该字段为此json模块描述--无需翻译，zh对象--为页面的各个模块中文字，单词，文段内容等，en对象--为页面的各个模块英文字，单词，文段内容等",
+  "key": "tk",
+  "name": "en",
+  "success": true,
+  "errCode": 0,
+  "msg": "success",
+  "data": {
+    "en": {
+      "login": {
+        "describe": "该字段为此json模块描述--无需翻译，登录模块",
+        "language": "Language ",
+        "chinese": "简体中文",
+        "english": "English",
+        "login": "Login",
+        "autoLogin": "Automatic login next time",
+        "username": "Account No ",
+        "password": "Password",
+        "rememberAccount": "Remember the Account No or not",
+        "validator": {
+          "tip1": "Account No cannot be empty",
+          "tip2": "Password cannot be empty",
+          "tip3": "No space is allowed",
+          "tip4": "Please fill in the content correctly ",
+          "tip5": "Please enter your password"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.auth.mapper.AdminRefreshTokenSessionMapper">
+
+  <resultMap id="AdminRefreshTokenSessionResultMap" type="com.studylib.modules.auth.entity.AdminRefreshTokenSessionEntity">
+    <id column="session_id" property="sessionId" />
+    <result column="user_id" property="userId" />
+    <result column="refresh_token" property="refreshToken" />
+    <result column="expires_at" property="expiresAt" />
+    <result column="revoked" property="revoked" />
+    <result column="user_agent" property="userAgent" />
+    <result column="last_used_at" property="lastUsedAt" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+  </resultMap>
+
+  <select id="selectBySessionId" resultMap="AdminRefreshTokenSessionResultMap">
+    select session_id, user_id, refresh_token, expires_at, revoked, user_agent, last_used_at, created_at, updated_at
+    from auth_refresh_tokens
+    where session_id = #{sessionId}
+  </select>
+
+  <insert id="insert">
+    insert into auth_refresh_tokens (session_id, user_id, refresh_token, expires_at, revoked, user_agent, last_used_at, created_at, updated_at)
+    values (#{sessionId}, #{userId}, #{refreshToken}, #{expiresAt}, #{revoked}, #{userAgent}, #{lastUsedAt}, #{createdAt}, #{updatedAt})
+  </insert>
+
+  <update id="update">
+    update auth_refresh_tokens
+    set user_id = #{userId},
+        refresh_token = #{refreshToken},
+        expires_at = #{expiresAt},
+        revoked = #{revoked},
+        user_agent = #{userAgent},
+        last_used_at = #{lastUsedAt},
+        created_at = #{createdAt},
+        updated_at = #{updatedAt}
+    where session_id = #{sessionId}
+  </update>
+
+  <update id="revokeBySessionId">
+    update auth_refresh_tokens
+    set revoked = true,
+        updated_at = #{updatedAt}
+    where session_id = #{sessionId}
+  </update>
+
+  <delete id="deleteByUserId">
+    delete from auth_refresh_tokens where user_id = #{userId}
+  </delete>
+</mapper>

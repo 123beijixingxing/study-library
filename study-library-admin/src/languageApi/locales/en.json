@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "Study Library Admin"
+  },
+  "layout": {
+    "home": "Admin Home",
+    "expandMenu": "Expand Menu",
+    "collapseMenu": "Collapse Menu",
+    "logout": "Log Out",
+    "language": "Language"
+  },
+  "login": {
+    "heroTitle": "Study Library Admin",
+    "heroDesc": "A unified operations console for users, courses, community content, membership, messages, support, system settings, analytics, and logs.",
+    "title": "Admin Login",
+    "subtitle": "Use your admin account to enter the console",
+    "username": "Username",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "submit": "Sign In"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "userManage": "User Management",
+    "homeManage": "Home Management",
+    "courseManage": "Course Management",
+    "gardenManage": "Community Management",
+    "memberManage": "Membership",
+    "memberPackageManage": "Member Packages",
+    "growthRuleManage": "Growth Rules",
+    "messageManage": "Message Center",
+    "messageTemplateManage": "Message Templates",
+    "serviceManage": "Support Center",
+    "systemManage": "System Settings",
+    "questionBankManage": "Question Bank",
+    "practicePaperManage": "Practice Papers",
+    "reportAudit": "Report Audit",
+    "searchOperationManage": "Search Operations",
+    "recommendSlotManage": "Recommend Slots",
+    "sensitiveWordManage": "Sensitive Words",
+    "statistics": "Analytics",
+    "logs": "Logs"
+  }
+}

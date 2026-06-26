@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.member.mapper.GrowthRuleMapper">
+
+  <resultMap id="GrowthRuleResultMap" type="com.studylib.modules.member.entity.GrowthRuleEntity">
+    <id column="rule_id" property="ruleId" />
+    <result column="rule_name" property="ruleName" />
+    <result column="trigger_type" property="triggerType" />
+    <result column="growth_value" property="growthValue" />
+    <result column="daily_limit" property="dailyLimit" />
+    <result column="status" property="status" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="GrowthRuleResultMap">
+    select rule_id, rule_name, trigger_type, growth_value, daily_limit, status, created_at, updated_at, created_by, updated_by, deleted
+    from growth_rules
+    where rule_id = #{ruleId}
+      and deleted = false
+  </select>
+
+  <select id="selectList" resultMap="GrowthRuleResultMap">
+    select rule_id, rule_name, trigger_type, growth_value, daily_limit, status, created_at, updated_at, created_by, updated_by, deleted
+    from growth_rules
+    where deleted = false
+    order by rule_id asc
+  </select>
+
+  <update id="update">
+    update growth_rules
+    set rule_name = #{ruleName},
+        trigger_type = #{triggerType},
+        growth_value = #{growthValue},
+        daily_limit = #{dailyLimit},
+        status = #{status},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where rule_id = #{ruleId}
+      and deleted = false
+  </update>
+</mapper>

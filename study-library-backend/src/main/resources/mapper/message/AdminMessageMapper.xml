@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.message.mapper.AdminMessageMapper">
+
+  <resultMap id="AdminMessageResultMap" type="com.studylib.modules.message.entity.AdminMessageEntity">
+    <id column="id" property="id" />
+    <result column="title" property="title" />
+    <result column="message_type" property="messageType" />
+    <result column="receiver_type" property="receiverType" />
+    <result column="send_status" property="sendStatus" />
+    <result column="send_time" property="sendTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="AdminMessageResultMap">
+    select id, title, message_type, receiver_type, send_status, send_time, created_at, updated_at, created_by, updated_by, deleted
+    from admin_messages
+    where id = #{id}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from admin_messages
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and title like concat('%', #{keyword}, '%')
+      </if>
+      <if test="sendStatus != null and sendStatus != '' and sendStatus != 'all'">
+        and send_status = #{sendStatus}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="AdminMessageResultMap">
+    select id, title, message_type, receiver_type, send_status, send_time, created_at, updated_at, created_by, updated_by, deleted
+    from admin_messages
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and title like concat('%', #{keyword}, '%')
+      </if>
+      <if test="sendStatus != null and sendStatus != '' and sendStatus != 'all'">
+        and send_status = #{sendStatus}
+      </if>
+    </where>
+    order by id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into admin_messages (
+      title, message_type, receiver_type, send_status, send_time,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{title}, #{messageType}, #{receiverType}, #{sendStatus}, #{sendTime},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update admin_messages
+    set title = #{title},
+        message_type = #{messageType},
+        receiver_type = #{receiverType},
+        send_status = #{sendStatus},
+        send_time = #{sendTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update admin_messages
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+</mapper>

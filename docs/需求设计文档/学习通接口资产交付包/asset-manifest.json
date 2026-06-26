@@ -1,0 +1,58 @@
+{
+  "packageName": "学习通接口资产交付包",
+  "version": "1.1",
+  "generatedAt": "2026-04-24",
+  "sections": [
+    {
+      "section": "01-接口规范",
+      "files": [
+        "docs/需求设计文档/学习通OpenAPI草案.yaml",
+        "docs/需求设计文档/学习通接口清单.md",
+        "docs/需求设计文档/学习通接口DTO字段字典.md",
+        "docs/需求设计文档/学习通前后端状态码规范.md",
+        "docs/需求设计文档/学习通状态枚举字典与字段约束说明.md",
+        "docs/需求设计文档/学习通状态流转图说明.md"
+      ]
+    },
+    {
+      "section": "02-联调导入",
+      "files": [
+        "docs/需求设计文档/学习通接口联调-PostmanCollection草案.json",
+        "docs/需求设计文档/学习通接口联调-PostmanCollection扩展草案.json",
+        "docs/需求设计文档/学习通接口联调-Postman环境草案.json",
+        "docs/需求设计文档/学习通Apifox导入说明.md",
+        "docs/需求设计文档/学习通接口联调报文集.md",
+        "docs/需求设计文档/学习通接口成功响应示例集.md",
+        "docs/需求设计文档/学习通接口错误响应示例集.md"
+      ]
+    },
+    {
+      "section": "03-代码模板",
+      "files": [
+        "docs/需求设计文档/代码模板示例/backend/",
+        "docs/需求设计文档/代码模板示例/frontend/",
+        "docs/需求设计文档/学习通后端DTO-VO代码模板与前端TypeScript类型模板.md",
+        "docs/需求设计文档/学习通后端Controller-Service-Mapper与前端API调用模板.md",
+        "docs/需求设计文档/学习通前后端枚举常量清单.md"
+      ]
+    },
+    {
+      "section": "04-测试资产",
+      "files": [
+        "docs/需求设计文档/学习通状态流转测试用例清单.md",
+        "docs/需求设计文档/学习通状态流转测试用例清单-导入版.csv",
+        "docs/需求设计文档/学习通状态流转测试用例清单-P1冒烟.csv",
+        "docs/需求设计文档/学习通状态流转测试用例清单-完整回归.csv"
+      ]
+    },
+    {
+      "section": "05-使用说明",
+      "files": [
+        "docs/需求设计文档/学习通接口资产交付说明.md",
+        "docs/需求设计文档/学习通接口资产交付包/05-使用说明/操作手册.md",
+        "docs/需求设计文档/学习通接口资产交付包/05-使用说明/验收清单.md",
+        "docs/需求设计文档/学习通接口资产交付包/05-使用说明/打包步骤.md"
+      ]
+    }
+  ]
+}

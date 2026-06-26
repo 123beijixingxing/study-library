@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.course.mapper.CourseMapper">
+
+  <resultMap id="CourseResultMap" type="com.studylib.modules.course.entity.CourseEntity">
+    <id column="id" property="id" />
+    <result column="course_name" property="courseName" />
+    <result column="category_name" property="categoryName" />
+    <result column="hot_score" property="hotScore" />
+    <result column="chapter_count" property="chapterCount" />
+    <result column="status" property="status" />
+    <result column="update_time" property="updateTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="CourseResultMap">
+    select id, course_name, category_name, hot_score, chapter_count, status, update_time, created_at, updated_at, created_by, updated_by, deleted
+    from courses
+    where id = #{id}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from courses
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and course_name like concat('%', #{keyword}, '%')
+      </if>
+      <if test="categoryName != null and categoryName != '' and categoryName != 'all'">
+        and category_name = #{categoryName}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="CourseResultMap">
+    select id, course_name, category_name, hot_score, chapter_count, status, update_time, created_at, updated_at, created_by, updated_by, deleted
+    from courses
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and course_name like concat('%', #{keyword}, '%')
+      </if>
+      <if test="categoryName != null and categoryName != '' and categoryName != 'all'">
+        and category_name = #{categoryName}
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into courses (
+      course_name, category_name, hot_score, chapter_count, status, update_time,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{courseName}, #{categoryName}, #{hotScore}, #{chapterCount}, #{status}, #{updateTime},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update courses
+    set course_name = #{courseName},
+        category_name = #{categoryName},
+        hot_score = #{hotScore},
+        chapter_count = #{chapterCount},
+        status = #{status},
+        update_time = #{updateTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="updateChapterCount">
+    update courses
+    set chapter_count = #{chapterCount},
+        update_time = #{updateTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update courses
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where id = #{id}
+      and deleted = false
+  </update>
+</mapper>

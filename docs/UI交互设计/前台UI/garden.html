@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习通 - 园地</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; }
+        
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: white; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 100; }
+        .header-left { flex: 8; }
+        .header-right { flex: 2; display: flex; justify-content: flex-end; }
+        .search-box { display: flex; gap: 8px; }
+        .search-input { flex: 1; padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+        .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: #f0f0f0; border: none; cursor: pointer; font-size: 16px; }
+        
+        .main { padding: 80px 20px 80px; }
+        
+        .tab-buttons { display: flex; gap: 12px; margin-bottom: 20px; background: white; padding: 16px; border-radius: 12px; }
+        .tab-btn { padding: 10px 20px; border: none; background: #f0f0f0; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        
+        .feed-list { display: flex; flex-direction: column; gap: 16px; }
+        .feed-card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        
+        .feed-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .feed-source { display: flex; align-items: center; gap: 8px; }
+        .source-logo { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; }
+        .source-name { font-size: 14px; font-weight: 500; color: #333; }
+        .follow-btn { padding: 4px 12px; border: 1px solid #667eea; background: white; color: #667eea; border-radius: 16px; font-size: 12px; cursor: pointer; }
+        
+        .feed-text { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 12px; }
+        
+        .feed-image { width: 100%; height: 200px; background: linear-gradient(135deg, #f0f0f0, #e0e0e0); border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: #999; }
+        
+        .feed-footer { display: flex; justify-content: space-between; align-items: center; }
+        .feed-meta { font-size: 12px; color: #999; }
+        .feed-actions { display: flex; gap: 16px; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 14px; color: #666; display: flex; align-items: center; gap: 4px; }
+        .action-btn:hover { color: #667eea; }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: white; display: flex; align-items: center; justify-content: space-around; box-shadow: 0 -2px 8px rgba(0,0,0,0.1); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; color: #999; font-size: 12px; }
+        .nav-item.active { color: #667eea; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 400px; }
+        .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .modal-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; min-height: 100px; }
+        .modal-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="搜索园地内容...">
+                <button class="icon-btn" onclick="doSearch()">🔍</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn" onclick="showContact()" title="联系">💬</button>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab(this, 'hot')">火热</button>
+            <button class="tab-btn" onclick="switchTab(this, 'share')">分享</button>
+            <button class="tab-btn" onclick="switchTab(this, 'collect')">收藏</button>
+        </div>
+
+        <div class="feed-list" id="feed-container">
+            <div class="feed-card">
+                <div class="feed-header">
+                    <div class="feed-source">
+                        <div class="source-logo">程</div>
+                        <span class="source-name">程序员之家</span>
+                    </div>
+                    <button class="follow-btn">+ 关注</button>
+                </div>
+                <div class="feed-text">今天学习了Vue3的Composition API，真的太香了！响应式原理理解得更透彻了，推荐大家也试试~</div>
+                <div class="feed-image">📷 图片</div>
+                <div class="feed-footer">
+                    <span class="feed-meta">程序员小明 · 2小时前</span>
+                    <div class="feed-actions">
+                        <button class="action-btn" onclick="toggleLike(this)">❤️ 256</button>
+                        <button class="action-btn">💬 42</button>
+                        <button class="action-btn">🔗 分享</button>
+                        <button class="action-btn">⭐ 收藏</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feed-card">
+                <div class="feed-header">
+                    <div class="feed-source">
+                        <div class="source-logo" style="background: linear-gradient(135deg, #52c41a, #1890ff);">技</div>
+                        <span class="source-name">技术前沿</span>
+                    </div>
+                    <button class="follow-btn">+ 关注</button>
+                </div>
+                <div class="feed-text">2026年最火的AI框架原来是这些！深度学习入门必看，内含学习路线图~</div>
+                <div class="feed-image">📷 图片</div>
+                <div class="feed-footer">
+                    <span class="feed-meta">AI研究者 · 5小时前</span>
+                    <div class="feed-actions">
+                        <button class="action-btn" onclick="toggleLike(this)">❤️ 189</button>
+                        <button class="action-btn">💬 31</button>
+                        <button class="action-btn">🔗 分享</button>
+                        <button class="action-btn">⭐ 收藏</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feed-card">
+                <div class="feed-header">
+                    <div class="feed-source">
+                        <div class="source-logo" style="background: linear-gradient(135deg, #faad14, #f5222d);">学</div>
+                        <span class="source-name">学习笔记</span>
+                    </div>
+                    <button class="follow-btn">+ 关注</button>
+                </div>
+                <div class="feed-text">分享一个超好用的学习方法：费曼学习法，亲测有效！教才是最好的学~</div>
+                <div class="feed-footer">
+                    <span class="feed-meta">学霸笔记 · 昨天</span>
+                    <div class="feed-actions">
+                        <button class="action-btn" onclick="toggleLike(this)">❤️ 423</button>
+                        <button class="action-btn">💬 67</button>
+                        <button class="action-btn">🔗 分享</button>
+                        <button class="action-btn">⭐ 收藏</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="location.href='home.html'">
+            <span class="icon">🏠</span>
+            <span>首页</span>
+        </div>
+        <div class="nav-item" onclick="location.href='study.html'">
+            <span class="icon">📚</span>
+            <span>学习</span>
+        </div>
+        <div class="nav-item active" onclick="location.href='garden.html'">
+            <span class="icon">🌳</span>
+            <span>园地</span>
+        </div>
+        <div class="nav-item" onclick="location.href='profile.html'">
+            <span class="icon">👤</span>
+            <span>我的</span>
+        </div>
+    </nav>
+
+    <div class="modal" id="contact-modal">
+        <div class="modal-content">
+            <div class="modal-title">联系我们</div>
+            <textarea class="modal-input" placeholder="请输入您想说的话..."></textarea>
+            <button class="modal-btn" onclick="sendMessage()">发送</button>
+            <button class="modal-btn" style="background: #999; margin-top: 8px;" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(btn, type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const container = document.getElementById('feed-container');
+            
+            if (type === 'hot') {
+                container.innerHTML = `
+                    <div class="feed-card"><div class="feed-header"><div class="feed-source"><div class="source-logo">程</div><span class="source-name">程序员之家</span></div><button class="follow-btn">+ 关注</button></div><div class="feed-text">今天学习了Vue3的Composition API，真的太香了！响应式原理理解得更透彻了，推荐大家也试试~</div><div class="feed-image">📷 图片</div><div class="feed-footer"><span class="feed-meta">程序员小明 · 2小时前</span><div class="feed-actions"><button class="action-btn" onclick="toggleLike(this)">❤️ 256</button><button class="action-btn">💬 42</button><button class="action-btn">🔗 分享</button><button class="action-btn">⭐ 收藏</button></div></div></div>
+                    <div class="feed-card"><div class="feed-header"><div class="feed-source"><div class="source-logo" style="background: linear-gradient(135deg, #52c41a, #1890ff);">技</div><span class="source-name">技术前沿</span></div><button class="follow-btn">+ 关注</button></div><div class="feed-text">2026年最火的AI框架原来是这些！深度学习入门必看，内含学习路线图~</div><div class="feed-image">📷 图片</div><div class="feed-footer"><span class="feed-meta">AI研究者 · 5小时前</span><div class="feed-actions"><button class="action-btn" onclick="toggleLike(this)">❤️ 189</button><button class="action-btn">💬 31</button><button class="action-btn">🔗 分享</button><button class="action-btn">⭐ 收藏</button></div></div></div>
+                `;
+            } else if (type === 'share') {
+                container.innerHTML = `
+                    <div class="feed-card"><div class="feed-header"><div class="feed-source"><div class="source-logo" style="background: linear-gradient(135deg, #f5222d, #faad14);">分</div><span class="source-name">分享达人</span></div><button class="follow-btn">+ 关注</button></div><div class="feed-text">历时一个月，终于完成了这个项目！从需求分析到上线全过程分享给大家~</div><div class="feed-image">📷 图片</div><div class="feed-footer"><span class="feed-meta">项目家 · 3小时前</span><div class="feed-actions"><button class="action-btn" onclick="toggleLike(this)">❤️ 178</button><button class="action-btn">💬 56</button><button class="action-btn">🔗 分享</button><button class="action-btn">⭐ 收藏</button></div></div></div>
+                    <div class="feed-card"><div class="feed-header"><div class="feed-source"><div class="source-logo" style="background: linear-gradient(135deg, #1890ff, #52c41a);">源</div><span class="source-name">开源世界</span></div><button class="follow-btn">+ 关注</button></div><div class="feed-text">开源一个自己写的组件库，欢迎star和使用~</div><div class="feed-footer"><span class="feed-meta">开源作者 · 昨天</span><div class="feed-actions"><button class="action-btn" onclick="toggleLike(this)">❤️ 892</button><button class="action-btn">💬 124</button><button class="action-btn">🔗 分享</button><button class="action-btn">⭐ 收藏</button></div></div></div>
+                `;
+            } else if (type === 'collect') {
+                container.innerHTML = `
+                    <div class="feed-card"><div class="feed-header"><div class="feed-source"><div class="source-logo">收</div><span class="source-name">收藏内容</span></div></div><div class="feed-text">这些是我收藏的优质内容，点击查看详情</div><div class="feed-footer"><span class="feed-meta">共收藏 28 条内容</span></div></div>
+                `;
+            }
+        }
+
+        function toggleLike(btn) {
+            if (btn.style.color === 'rgb(102, 126, 234)') {
+                btn.style.color = '#666';
+            } else {
+                btn.style.color = '#667eea';
+            }
+        }
+        
+        function showContact() { document.getElementById('contact-modal').classList.add('active'); }
+        function closeModal() { document.getElementById('contact-modal').classList.remove('active'); }
+        function doSearch() { alert('搜索园地内容'); }
+        function sendMessage() { alert('消息已发送'); closeModal(); }
+    </script>
+</body>
+</html>

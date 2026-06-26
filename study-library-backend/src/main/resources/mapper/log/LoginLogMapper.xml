@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.log.mapper.LoginLogMapper">
+
+  <resultMap id="LoginLogResultMap" type="com.studylib.modules.log.entity.LoginLogEntity">
+    <id column="id" property="id" />
+    <result column="login_time" property="loginTime" />
+    <result column="username" property="username" />
+    <result column="login_type" property="loginType" />
+    <result column="status" property="status" />
+    <result column="ip" property="ip" />
+  </resultMap>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from login_logs
+    <where>
+      <if test="keyword != null and keyword != ''">
+        and username like concat('%', #{keyword}, '%')
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="LoginLogResultMap">
+    select id, login_time, username, login_type, status, ip
+    from login_logs
+    <where>
+      <if test="keyword != null and keyword != ''">
+        and username like concat('%', #{keyword}, '%')
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into login_logs (login_time, username, login_type, status, ip)
+    values (#{loginTime}, #{username}, #{loginType}, #{status}, #{ip})
+  </insert>
+</mapper>

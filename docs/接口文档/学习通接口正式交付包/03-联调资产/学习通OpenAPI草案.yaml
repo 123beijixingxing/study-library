@@ -1,0 +1,5431 @@
+openapi: 3.0.3
+info:
+  title: 学习通 API Draft
+  version: 1.1.0
+  description: >-
+    Draft OpenAPI specification generated from the Study Library requirement,
+    interface, DTO, and status-flow documents.
+servers:
+  - url: /
+    description: Unified API root; paths already include full `/api/app/v1` or `/api/admin/v1` prefixes
+tags:
+  - name: app-auth
+  - name: app-course
+  - name: app-practice
+  - name: app-message
+  - name: admin-auth
+  - name: admin-course
+  - name: admin-message
+  - name: admin-report
+  - name: admin-config
+  - name: admin-statistics
+paths:
+  /api/app/v1/auth/login:
+    post:
+      tags: [app-auth]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppLoginRequestDTO'
+      responses:
+        '200':
+          description: Login response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppLoginResponseEnvelope'
+  /api/app/v1/auth/register:
+    post:
+      tags: [app-auth]
+      summary: User register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppRegisterRequestDTO'
+      responses:
+        '200':
+          description: Register response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponseEnvelope'
+  /api/app/v1/auth/password/code:
+    post:
+      tags: [app-auth]
+      summary: Send password reset code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordCodeRequestDTO'
+      responses:
+        '200':
+          description: Code sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpireSecondsEnvelope'
+  /api/app/v1/auth/password/verify:
+    post:
+      tags: [app-auth]
+      summary: Verify password reset code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [emailOrPhone, code]
+              properties:
+                emailOrPhone:
+                  type: string
+                code:
+                  type: string
+      responses:
+        '200':
+          description: Verify token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          verifyToken:
+                            type: string
+  /api/app/v1/auth/password/reset:
+    post:
+      tags: [app-auth]
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [verifyToken, newPassword, confirmPassword]
+              properties:
+                verifyToken:
+                  type: string
+                newPassword:
+                  type: string
+                confirmPassword:
+                  type: string
+      responses:
+        '200':
+          description: Reset result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/app/v1/auth/me:
+    get:
+      tags: [app-auth]
+      summary: Get current user info
+      responses:
+        '200':
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppUserInfo'
+  /api/app/v1/auth/logout:
+    post:
+      tags: [app-auth]
+      summary: Logout current user
+      responses:
+        '200':
+          description: Logout result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/app/v1/home/hot-contents:
+    get:
+      tags: [app-course]
+      summary: Get home hot contents
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: Hot content list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HotContentListEnvelope'
+  /api/app/v1/home/courses:
+    get:
+      tags: [app-course]
+      summary: Get home courses by section
+      parameters:
+        - name: sectionType
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [recommend, hot, latest]
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Home course page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeCoursePageEnvelope'
+  /api/app/v1/home/categories:
+    get:
+      tags: [app-course]
+      summary: Get home categories
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Home category page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeCategoryPageEnvelope'
+  /api/app/v1/courses/{courseId}:
+    get:
+      tags: [app-course]
+      summary: Get course detail
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '200':
+          description: Course detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetailResponseEnvelope'
+  /api/app/v1/courses/{courseId}/evaluations:
+    get:
+      tags: [app-course]
+      summary: Get course evaluations
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Evaluation page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEvaluationPageEnvelope'
+    post:
+      tags: [app-course]
+      summary: Create course evaluation
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseEvaluationCreateRequestDTO'
+      responses:
+        '200':
+          description: Evaluation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationCreateResponseEnvelope'
+  /api/app/v1/courses/{courseId}/chapters:
+    get:
+      tags: [app-course]
+      summary: Get course chapter list
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '200':
+          description: Chapter list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseChapterListEnvelope'
+  /api/app/v1/courses/{courseId}/progress:
+    post:
+      tags: [app-course]
+      summary: Submit study progress
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudyProgressRequestDTO'
+      responses:
+        '200':
+          description: Study progress result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudyProgressEnvelope'
+  /api/app/v1/practice/papers:
+    get:
+      tags: [app-practice]
+      summary: Get practice paper list
+      parameters:
+        - name: scene
+          in: query
+          schema:
+            type: string
+        - name: courseId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: chapterId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: paperType
+          in: query
+          schema:
+            type: string
+            enum: [chapter, special, mock]
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Practice paper page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticePaperPageEnvelope'
+  /api/app/v1/practice/entries:
+    get:
+      tags: [app-practice]
+      summary: Get practice entry list
+      parameters:
+        - name: scene
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Practice entry list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticeEntryListEnvelope'
+  /api/app/v1/practice/papers/{paperId}:
+    get:
+      tags: [app-practice]
+      summary: Get practice paper detail
+      parameters:
+        - $ref: '#/components/parameters/PaperId'
+      responses:
+        '200':
+          description: Practice paper detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticePaperDetailEnvelope'
+  /api/app/v1/practice/papers/{paperId}/submit:
+    post:
+      tags: [app-practice]
+      summary: Submit practice answers
+      parameters:
+        - $ref: '#/components/parameters/PaperId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PracticeSubmitRequestDTO'
+      responses:
+        '200':
+          description: Submit result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticeSubmitResponseEnvelope'
+  /api/app/v1/search:
+    get:
+      tags: [app-course]
+      summary: Search courses, categories, or contents
+      parameters:
+        - $ref: '#/components/parameters/Keyword'
+        - name: searchType
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [course, category, content]
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Search result page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResultPageEnvelope'
+  /api/app/v1/search/hot-keywords:
+    get:
+      tags: [app-course]
+      summary: Get hot search keywords
+      parameters:
+        - name: scene
+          in: query
+          schema:
+            type: string
+            enum: [home, study, practice]
+      responses:
+        '200':
+          description: Keyword list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeywordListEnvelope'
+  /api/app/v1/search/history:
+    get:
+      tags: [app-course]
+      summary: Get search history
+      parameters:
+        - name: scene
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: History list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryListEnvelope'
+    delete:
+      tags: [app-course]
+      summary: Clear search history
+      parameters:
+        - name: scene
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Clear result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/app/v1/search/suggest:
+    get:
+      tags: [app-course]
+      summary: Get search suggestions
+      parameters:
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Suggest list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestListEnvelope'
+  /api/app/v1/categories/tree:
+    get:
+      tags: [app-course]
+      summary: Get category tree
+      parameters:
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Category tree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryTreeEnvelope'
+  /api/app/v1/categories/{categoryId}/courses:
+    get:
+      tags: [app-course]
+      summary: Get category courses
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Category course page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeCoursePageEnvelope'
+  /api/app/v1/categories/{categoryId}:
+    get:
+      tags: [app-course]
+      summary: Get category detail
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Category detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDetailEnvelope'
+  /api/app/v1/sub-categories/{subCategoryId}:
+    get:
+      tags: [app-course]
+      summary: Get sub-category detail
+      parameters:
+        - name: subCategoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Sub-category detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubCategoryDetailEnvelope'
+  /api/app/v1/me/member-center:
+    get:
+      tags: [app-message]
+      summary: Get member center info
+      responses:
+        '200':
+          description: Member center data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberCenterEnvelope'
+  /api/app/v1/me/overview:
+    get:
+      tags: [app-message]
+      summary: Get profile overview
+      responses:
+        '200':
+          description: Overview info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OverviewEnvelope'
+  /api/app/v1/me/growth:
+    get:
+      tags: [app-message]
+      summary: Get growth info
+      responses:
+        '200':
+          description: Growth info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrowthEnvelope'
+  /api/app/v1/me/check-in/status:
+    get:
+      tags: [app-message]
+      summary: Get check-in status
+      responses:
+        '200':
+          description: Check-in status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckInStatusEnvelope'
+  /api/app/v1/me/check-in:
+    post:
+      tags: [app-message]
+      summary: Do check-in
+      responses:
+        '200':
+          description: Check-in result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckInResultEnvelope'
+  /api/app/v1/me/tasks:
+    get:
+      tags: [app-message]
+      summary: Get task list
+      parameters:
+        - name: taskType
+          in: query
+          schema:
+            type: string
+            enum: [check_in, study, practice]
+      responses:
+        '200':
+          description: Task list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskListEnvelope'
+  /api/app/v1/me/profile:
+    get:
+      tags: [app-message]
+      summary: Get profile detail
+      responses:
+        '200':
+          description: Profile detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileEnvelope'
+    put:
+      tags: [app-message]
+      summary: Update profile detail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequestDTO'
+      responses:
+        '200':
+          description: Profile update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+  /api/app/v1/me/study-records:
+    get:
+      tags: [app-practice]
+      summary: Get study records
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Study record page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudyRecordPageEnvelope'
+  /api/app/v1/me/practice-records:
+    get:
+      tags: [app-practice]
+      summary: Get practice records
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Practice record page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticeRecordPageEnvelope'
+  /api/app/v1/me/wrong-questions:
+    get:
+      tags: [app-practice]
+      summary: Get wrong question list
+      parameters:
+        - name: courseId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Wrong question page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WrongQuestionPageEnvelope'
+  /api/app/v1/me/offline-downloads:
+    get:
+      tags: [app-message]
+      summary: Get offline download list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Offline download page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfflineDownloadPageEnvelope'
+  /api/app/v1/me/offline-downloads/{downloadId}:
+    delete:
+      tags: [app-message]
+      summary: Delete offline download
+      parameters:
+        - name: downloadId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/app/v1/me/favorites:
+    get:
+      tags: [app-message]
+      summary: Get favorites
+      parameters:
+        - name: favoriteType
+          in: query
+          schema:
+            type: string
+            enum: [course, content]
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Favorite page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoritePageEnvelope'
+  /api/app/v1/system/info:
+    get:
+      tags: [app-message]
+      summary: Get system info
+      responses:
+        '200':
+          description: System info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemInfoEnvelope'
+  /api/app/v1/system/scan-config:
+    get:
+      tags: [app-message]
+      summary: Get scan config
+      responses:
+        '200':
+          description: Scan config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanConfigEnvelope'
+  /api/app/v1/garden/contents/{contentId}/report:
+    post:
+      tags: [app-message]
+      summary: Submit content report
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentReportRequestDTO'
+      responses:
+        '200':
+          description: Report created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportIdResponseEnvelope'
+  /api/app/v1/garden/contents:
+    get:
+      tags: [app-message]
+      summary: Get garden contents
+      parameters:
+        - name: tabType
+          in: query
+          schema:
+            type: string
+            enum: [hot, share, favorite]
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Garden content page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GardenContentPageEnvelope'
+  /api/app/v1/garden/contents/{contentId}:
+    get:
+      tags: [app-message]
+      summary: Get garden content detail
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      responses:
+        '200':
+          description: Garden content detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GardenContentDetailEnvelope'
+  /api/app/v1/garden/sources/{sourceId}/follow:
+    post:
+      tags: [app-message]
+      summary: Follow garden source
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Follow result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowResultEnvelope'
+  /api/app/v1/garden/contents/{contentId}/like:
+    post:
+      tags: [app-message]
+      summary: Like or unlike content
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      responses:
+        '200':
+          description: Like result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikeResultEnvelope'
+  /api/app/v1/garden/contents/{contentId}/favorite:
+    post:
+      tags: [app-message]
+      summary: Favorite or unfavorite content
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      responses:
+        '200':
+          description: Favorite result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoriteResultEnvelope'
+  /api/app/v1/garden/contents/{contentId}/comments:
+    get:
+      tags: [app-message]
+      summary: Get garden comments
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Comment page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentPageEnvelope'
+    post:
+      tags: [app-message]
+      summary: Create garden comment
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [commentText]
+              properties:
+                commentText:
+                  type: string
+      responses:
+        '200':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentIdResponseEnvelope'
+  /api/app/v1/garden/comments/{commentId}:
+    delete:
+      tags: [app-message]
+      summary: Delete garden comment
+      parameters:
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/app/v1/garden/contact-messages:
+    post:
+      tags: [app-message]
+      summary: Submit contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [messageContent, contactType]
+              properties:
+                messageContent:
+                  type: string
+                contactType:
+                  type: string
+      responses:
+        '200':
+          description: Contact message created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageIdResponseEnvelope'
+  /api/app/v1/me/messages/{messageId}/read:
+    patch:
+      tags: [app-message]
+      summary: Mark message as read
+      parameters:
+        - $ref: '#/components/parameters/MessageId'
+      responses:
+        '200':
+          description: Read result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadStatusEnvelope'
+  /api/app/v1/me/messages:
+    get:
+      tags: [app-message]
+      summary: Get my messages
+      parameters:
+        - name: messageStatus
+          in: query
+          schema:
+            type: string
+            enum: [unread, read]
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Message page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessagePageEnvelope'
+  /api/app/v1/me/messages/read-all:
+    patch:
+      tags: [app-message]
+      summary: Mark all messages read
+      parameters:
+        - name: messageType
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Batch read result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/app/v1/me/customer-service/sessions:
+    get:
+      tags: [app-message]
+      summary: Get service sessions
+      responses:
+        '200':
+          description: Service session page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSessionPageEnvelope'
+  /api/app/v1/me/customer-service/faqs:
+    get:
+      tags: [app-message]
+      summary: Get service faqs
+      parameters:
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: FAQ list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaqListEnvelope'
+  /api/app/v1/me/customer-service/sessions/{sessionId}/messages:
+    get:
+      tags: [app-message]
+      summary: Get service session messages
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Service message page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceMessagePageEnvelope'
+    post:
+      tags: [app-message]
+      summary: Send service message
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [messageText]
+              properties:
+                messageText:
+                  type: string
+      responses:
+        '200':
+          description: Message send result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          messageId:
+                            type: integer
+                            format: int64
+                          sendTime:
+                            type: string
+  /api/admin/v1/auth/login:
+    post:
+      tags: [admin-auth]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLoginRequestDTO'
+      responses:
+        '200':
+          description: Admin login response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminLoginResponseEnvelope'
+  /api/admin/v1/auth/me:
+    get:
+      tags: [admin-auth]
+      summary: Get current admin info
+      responses:
+        '200':
+          description: Admin info
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AdminInfo'
+  /api/admin/v1/auth/logout:
+    post:
+      tags: [admin-auth]
+      summary: Logout current admin
+      responses:
+        '200':
+          description: Logout result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/dashboard/summary:
+    get:
+      tags: [admin-statistics]
+      summary: Get dashboard summary
+      responses:
+        '200':
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummaryEnvelope'
+  /api/admin/v1/dashboard/user-trend:
+    get:
+      tags: [admin-statistics]
+      summary: Get dashboard user trend
+      parameters:
+        - name: dateType
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 7d
+      responses:
+        '200':
+          description: User trend data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendChartEnvelope'
+  /api/admin/v1/dashboard/recent-users:
+    get:
+      tags: [admin-statistics]
+      summary: Get recent users
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Recent user list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecentUserListEnvelope'
+  /api/admin/v1/home/courses:
+    get:
+      tags: [admin-config]
+      summary: Get home course configs
+      parameters:
+        - name: sectionType
+          in: query
+          schema:
+            type: string
+            enum: [recommend, hot, latest]
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Home course config page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeCourseConfigPageEnvelope'
+    post:
+      tags: [admin-config]
+      summary: Create home course config
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HomeCourseConfigSaveRequestDTO'
+      responses:
+        '200':
+          description: Created config id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigIdResponseEnvelope'
+  /api/admin/v1/home/courses/{configId}:
+    put:
+      tags: [admin-config]
+      summary: Update home course config
+      parameters:
+        - name: configId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HomeCourseConfigUpdateRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+    delete:
+      tags: [admin-config]
+      summary: Delete home course config
+      parameters:
+        - name: configId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/categories/tree:
+    get:
+      tags: [admin-config]
+      summary: Get admin category tree
+      responses:
+        '200':
+          description: Category tree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryTreeEnvelope'
+  /api/admin/v1/categories:
+    post:
+      tags: [admin-config]
+      summary: Create category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategorySaveRequestDTO'
+      responses:
+        '200':
+          description: Created category id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryIdResponseEnvelope'
+  /api/admin/v1/categories/{categoryId}:
+    put:
+      tags: [admin-config]
+      summary: Update category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategorySaveRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+    delete:
+      tags: [admin-config]
+      summary: Delete category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/courses:
+    get:
+      tags: [admin-course]
+      summary: Get admin course list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - name: categoryId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Course list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCoursePageEnvelope'
+    post:
+      tags: [admin-course]
+      summary: Create course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCourseCreateRequestDTO'
+      responses:
+        '200':
+          description: Created course id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseIdResponseEnvelope'
+  /api/admin/v1/courses/{courseId}:
+    get:
+      tags: [admin-course]
+      summary: Get admin course detail
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '200':
+          description: Course detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCourseDetailEnvelope'
+    put:
+      tags: [admin-course]
+      summary: Update course
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCourseCreateRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+    delete:
+      tags: [admin-course]
+      summary: Delete course
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/courses/{courseId}/status:
+    patch:
+      tags: [admin-course]
+      summary: Update course publish status
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [draft, pending, published, offline]
+      responses:
+        '200':
+          description: Status result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseStatusEnvelope'
+  /api/admin/v1/course-evaluations:
+    get:
+      tags: [admin-course]
+      summary: Get course evaluation list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: courseId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: score
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Evaluation page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCourseEvaluationPageEnvelope'
+  /api/admin/v1/course-evaluations/{evaluationId}/status:
+    patch:
+      tags: [admin-course]
+      summary: Update course evaluation status
+      parameters:
+        - name: evaluationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [visible, hidden, deleted]
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+  /api/admin/v1/courses/{courseId}/chapters:
+    get:
+      tags: [admin-course]
+      summary: Get admin course chapters
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '200':
+          description: Chapter list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseChapterListEnvelope'
+    post:
+      tags: [admin-course]
+      summary: Create course chapter
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseChapterSaveRequestDTO'
+      responses:
+        '200':
+          description: Created chapter id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChapterIdResponseEnvelope'
+  /api/admin/v1/courses/{courseId}/chapters/{chapterId}:
+    put:
+      tags: [admin-course]
+      summary: Update course chapter
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseChapterSaveRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+    delete:
+      tags: [admin-course]
+      summary: Delete course chapter
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/contents:
+    get:
+      tags: [admin-message]
+      summary: Get content list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: contentType
+          in: query
+          schema:
+            type: string
+        - name: auditStatus
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Content page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminContentPageEnvelope'
+    post:
+      tags: [admin-message]
+      summary: Create content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminContentSaveRequestDTO'
+      responses:
+        '200':
+          description: Created content id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentIdResponseEnvelope'
+  /api/admin/v1/contents/{contentId}:
+    get:
+      tags: [admin-message]
+      summary: Get content detail
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      responses:
+        '200':
+          description: Content detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminContentDetailEnvelope'
+    put:
+      tags: [admin-message]
+      summary: Update content
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminContentSaveRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+    delete:
+      tags: [admin-message]
+      summary: Delete content
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/contents/{contentId}/audit:
+    post:
+      tags: [admin-message]
+      summary: Audit content
+      parameters:
+        - $ref: '#/components/parameters/ContentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentAuditRequestDTO'
+      responses:
+        '200':
+          description: Audit result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentAuditEnvelope'
+  /api/admin/v1/favorites:
+    get:
+      tags: [admin-message]
+      summary: Get favorite records
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Favorite record page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFavoritePageEnvelope'
+  /api/admin/v1/favorites/{favoriteId}:
+    delete:
+      tags: [admin-message]
+      summary: Delete favorite record
+      parameters:
+        - name: favoriteId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/users:
+    get:
+      tags: [admin-auth]
+      summary: Get admin user list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - name: role
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: User page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserPageEnvelope'
+    post:
+      tags: [admin-auth]
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUserCreateRequestDTO'
+      responses:
+        '200':
+          description: Created user id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserIdResponseEnvelope'
+  /api/admin/v1/users/{userId}:
+    get:
+      tags: [admin-auth]
+      summary: Get user detail
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserDetailEnvelope'
+    put:
+      tags: [admin-auth]
+      summary: Update user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUserUpdateRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+    delete:
+      tags: [admin-auth]
+      summary: Delete user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/users/{userId}/reset-password:
+    post:
+      tags: [admin-auth]
+      summary: Reset user password
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [newPassword]
+              properties:
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Reset result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/users/{userId}/status:
+    patch:
+      tags: [admin-auth]
+      summary: Update user status
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [enabled, disabled]
+      responses:
+        '200':
+          description: Status result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatusEnvelope'
+  /api/admin/v1/users/{userId}/permissions:
+    patch:
+      tags: [admin-auth]
+      summary: Update user permissions
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleList:
+                  type: array
+                  items:
+                    type: string
+                permissionList:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Permission update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+  /api/admin/v1/users/export:
+    get:
+      tags: [admin-auth]
+      summary: Export users
+      parameters:
+        - $ref: '#/components/parameters/Keyword'
+        - name: role
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Export result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUrlEnvelope'
+  /api/admin/v1/users/import:
+    post:
+      tags: [admin-auth]
+      summary: Import users
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResultEnvelope'
+  /api/admin/v1/messages:
+    get:
+      tags: [admin-message]
+      summary: Get message list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: messageType
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Message page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMessagePageEnvelope'
+    post:
+      tags: [admin-message]
+      summary: Create system message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminMessageCreateRequestDTO'
+      responses:
+        '200':
+          description: Created message id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageIdResponseEnvelope'
+  /api/admin/v1/messages/{messageId}:
+    delete:
+      tags: [admin-message]
+      summary: Delete message
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/reports/{reportId}/handle:
+    post:
+      tags: [admin-report]
+      summary: Handle report
+      parameters:
+        - $ref: '#/components/parameters/ReportId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportHandleRequestDTO'
+      responses:
+        '200':
+          description: Handle report result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportHandleResponseEnvelope'
+  /api/admin/v1/recommend-slots:
+    get:
+      tags: [admin-config]
+      summary: Get recommend slots
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: pageCode
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Recommend slot page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendSlotPageEnvelope'
+    post:
+      tags: [admin-config]
+      summary: Save recommend slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendSlotSaveRequestDTO'
+      responses:
+        '200':
+          description: Created slot id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SlotIdResponseEnvelope'
+  /api/admin/v1/member-packages:
+    get:
+      tags: [admin-config]
+      summary: Get member packages
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Member package page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberPackagePageEnvelope'
+    post:
+      tags: [admin-config]
+      summary: Save member package
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberPackageSaveRequestDTO'
+      responses:
+        '200':
+          description: Created package id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageIdResponseEnvelope'
+  /api/admin/v1/message-templates:
+    get:
+      tags: [admin-config]
+      summary: Get message templates
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: messageType
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Message template page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageTemplatePageEnvelope'
+    post:
+      tags: [admin-config]
+      summary: Save message template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageTemplateSaveRequestDTO'
+      responses:
+        '200':
+          description: Created template id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateIdResponseEnvelope'
+  /api/admin/v1/question-banks:
+    get:
+      tags: [admin-course]
+      summary: Get question bank list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Question bank page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionBankPageEnvelope'
+    post:
+      tags: [admin-course]
+      summary: Create question bank
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionBankCreateRequestDTO'
+      responses:
+        '200':
+          description: Created bank id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankIdResponseEnvelope'
+  /api/admin/v1/members:
+    get:
+      tags: [admin-config]
+      summary: Get members
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - name: memberLevel
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Member page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMemberPageEnvelope'
+  /api/admin/v1/members/{userId}/grant:
+    post:
+      tags: [admin-config]
+      summary: Grant member to user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [memberLevel, expireTime]
+              properties:
+                memberLevel:
+                  type: string
+                expireTime:
+                  type: string
+      responses:
+        '200':
+          description: Member grant result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberIdResponseEnvelope'
+  /api/admin/v1/members/{userId}/cancel:
+    post:
+      tags: [admin-config]
+      summary: Cancel member
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cancelReason]
+              properties:
+                cancelReason:
+                  type: string
+      responses:
+        '200':
+          description: Cancel result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/members/renewals:
+    get:
+      tags: [admin-config]
+      summary: Get member renewal records
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Renewal record page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberRenewalPageEnvelope'
+  /api/admin/v1/growth-rules:
+    get:
+      tags: [admin-config]
+      summary: Get growth rules
+      responses:
+        '200':
+          description: Growth rule list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrowthRuleListEnvelope'
+    put:
+      tags: [admin-config]
+      summary: Update growth rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrowthRuleUpdateRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+  /api/admin/v1/study-records:
+    get:
+      tags: [admin-course]
+      summary: Get study records
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Study record page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStudyRecordPageEnvelope'
+  /api/admin/v1/study-records/{recordId}:
+    delete:
+      tags: [admin-course]
+      summary: Delete study record
+      parameters:
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Delete result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSuccessEnvelope'
+  /api/admin/v1/questions:
+    get:
+      tags: [admin-course]
+      summary: Get question list
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: bankId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: questionType
+          in: query
+          schema:
+            type: string
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Question page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionPageEnvelope'
+  /api/admin/v1/questions/import:
+    post:
+      tags: [admin-course]
+      summary: Import questions
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, bankId]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                bankId:
+                  type: integer
+                  format: int64
+      responses:
+        '200':
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResultEnvelope'
+  /api/admin/v1/questions/{questionId}/status:
+    patch:
+      tags: [admin-course]
+      summary: Update question status
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [draft, published, disabled]
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionStatusEnvelope'
+  /api/admin/v1/practice-papers:
+    post:
+      tags: [admin-course]
+      summary: Create practice paper
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PracticePaperCreateRequestDTO'
+      responses:
+        '200':
+          description: Created paper id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaperIdResponseEnvelope'
+  /api/admin/v1/practice-records/analysis:
+    get:
+      tags: [admin-statistics]
+      summary: Get practice analysis
+      parameters:
+        - name: courseId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Practice analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticeAnalysisEnvelope'
+  /api/admin/v1/wrong-questions/analysis:
+    get:
+      tags: [admin-statistics]
+      summary: Get wrong question analysis
+      parameters:
+        - name: courseId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: chapterId
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Wrong question analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WrongQuestionAnalysisEnvelope'
+  /api/admin/v1/system/info:
+    get:
+      tags: [admin-config]
+      summary: Get system info config
+      responses:
+        '200':
+          description: System info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminSystemInfoEnvelope'
+    put:
+      tags: [admin-config]
+      summary: Update system info config
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSystemInfoUpdateRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+  /api/admin/v1/system/features:
+    get:
+      tags: [admin-config]
+      summary: Get feature switch config
+      responses:
+        '200':
+          description: Feature config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureConfigEnvelope'
+    put:
+      tags: [admin-config]
+      summary: Update feature switch config
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeatureConfigUpdateRequestDTO'
+      responses:
+        '200':
+          description: Update result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedAtEnvelope'
+  /api/admin/v1/logs/operations:
+    get:
+      tags: [admin-statistics]
+      summary: Get operation logs
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - name: operationType
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operation log page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLogPageEnvelope'
+  /api/admin/v1/logs/logins:
+    get:
+      tags: [admin-statistics]
+      summary: Get login logs
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - name: loginStatus
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Login log page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginLogPageEnvelope'
+  /api/admin/v1/service-tickets:
+    get:
+      tags: [admin-message]
+      summary: Get service tickets
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Service ticket page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceTicketPageEnvelope'
+  /api/admin/v1/service-tickets/{ticketId}:
+    get:
+      tags: [admin-message]
+      summary: Get service ticket detail
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Service ticket detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceTicketDetailEnvelope'
+  /api/admin/v1/service-tickets/{ticketId}/reply:
+    post:
+      tags: [admin-message]
+      summary: Reply service ticket
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [replyContent]
+              properties:
+                replyContent:
+                  type: string
+      responses:
+        '200':
+          description: Reply result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplyIdResponseEnvelope'
+  /api/admin/v1/search/hot-keywords:
+    get:
+      tags: [admin-config]
+      summary: Get search keywords
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: scene
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Search keyword page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchKeywordPageEnvelope'
+    post:
+      tags: [admin-config]
+      summary: Save search keyword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchKeywordSaveRequestDTO'
+      responses:
+        '200':
+          description: Created keyword id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeywordIdResponseEnvelope'
+  /api/admin/v1/reports:
+    get:
+      tags: [admin-report]
+      summary: Get reports
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - name: reportType
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Report page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportPageEnvelope'
+  /api/admin/v1/sensitive-words:
+    get:
+      tags: [admin-report]
+      summary: Get sensitive words
+      parameters:
+        - $ref: '#/components/parameters/PageNum'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: Sensitive word page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensitiveWordPageEnvelope'
+  /api/admin/v1/statistics/users:
+    get:
+      tags: [admin-statistics]
+      summary: Get user statistics
+      parameters:
+        - name: dateType
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 7d
+      responses:
+        '200':
+          description: User statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatisticsEnvelope'
+  /api/admin/v1/statistics/courses:
+    get:
+      tags: [admin-statistics]
+      summary: Get course statistics
+      parameters:
+        - name: dateType
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 7d
+      responses:
+        '200':
+          description: Course statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseStatisticsEnvelope'
+  /api/admin/v1/statistics/activities:
+    get:
+      tags: [admin-statistics]
+      summary: Get activity statistics
+      parameters:
+        - name: dateType
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 7d
+      responses:
+        '200':
+          description: Activity statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityStatisticsEnvelope'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    CourseId:
+      name: courseId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    PaperId:
+      name: paperId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    MessageId:
+      name: messageId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ContentId:
+      name: contentId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ReportId:
+      name: reportId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    PageNum:
+      name: pageNum
+      in: query
+      schema:
+        type: integer
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        default: 10
+    Keyword:
+      name: keyword
+      in: query
+      schema:
+        type: string
+    Status:
+      name: status
+      in: query
+      schema:
+        type: string
+  schemas:
+    BaseEnvelope:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: success
+        requestId:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+    AppLoginRequestDTO:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          maxLength: 30
+        password:
+          type: string
+          maxLength: 18
+        rememberMe:
+          type: boolean
+    AppRegisterRequestDTO:
+      type: object
+      required: [username, password, confirmPassword, email, phone]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+    PasswordCodeRequestDTO:
+      type: object
+      required: [accountType, emailOrPhone]
+      properties:
+        accountType:
+          type: string
+          enum: [email, phone]
+        emailOrPhone:
+          type: string
+    AppUserInfo:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+        avatar:
+          type: string
+        memberStatus:
+          type: string
+          enum: [active, expiring, expired, cancelled]
+        roleList:
+          type: array
+          items:
+            type: string
+    MemberInfoSummary:
+      type: object
+      properties:
+        memberStatus:
+          type: string
+          enum: [active, expiring, expired, cancelled]
+        memberLevel:
+          type: string
+        expireTime:
+          type: string
+    RewardInfo:
+      type: object
+      properties:
+        rewardType:
+          type: string
+        rewardValue:
+          type: integer
+        rewardName:
+          type: string
+    SourceInfo:
+      type: object
+      properties:
+        sourceId:
+          type: integer
+          format: int64
+        sourceName:
+          type: string
+        sourceLogoUrl:
+          type: string
+        sourceDesc:
+          type: string
+    ScoreDistributionItem:
+      type: object
+      properties:
+        bucket:
+          type: string
+        count:
+          type: integer
+        rate:
+          type: number
+    AppLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        refreshToken:
+          type: string
+        userInfo:
+          $ref: '#/components/schemas/AppUserInfo'
+    CourseEvaluationCreateRequestDTO:
+      type: object
+      required: [score]
+      properties:
+        score:
+          type: integer
+          minimum: 1
+          maximum: 5
+        content:
+          type: string
+          maxLength: 1000
+    CourseChapter:
+      type: object
+      properties:
+        chapterId:
+          type: integer
+          format: int64
+        chapterTitle:
+          type: string
+        chapterType:
+          type: string
+          enum: [text, video, audio, file]
+        sortNo:
+          type: integer
+        durationSeconds:
+          type: integer
+        learned:
+          type: boolean
+    CourseDetailResponse:
+      type: object
+      properties:
+        courseId:
+          type: integer
+          format: int64
+        courseName:
+          type: string
+        teacherName:
+          type: string
+        summary:
+          type: string
+        coverUrl:
+          type: string
+        tagList:
+          type: array
+          items:
+            type: string
+        averageScore:
+          type: number
+        evaluationCount:
+          type: integer
+        progressPercent:
+          type: number
+        chapterList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseChapter'
+    QuestionOption:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+    PracticeQuestion:
+      type: object
+      properties:
+        questionId:
+          type: integer
+          format: int64
+        questionType:
+          type: string
+          enum: [single_choice, multi_choice, judge]
+        questionTitle:
+          type: string
+        optionList:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionOption'
+        knowledgeTagList:
+          type: array
+          items:
+            type: string
+        answerAnalysis:
+          type: string
+    PracticePaperDetailResponse:
+      type: object
+      properties:
+        paperId:
+          type: integer
+          format: int64
+        paperName:
+          type: string
+        paperType:
+          type: string
+          enum: [chapter, special, mock]
+        totalScore:
+          type: number
+        questionList:
+          type: array
+          items:
+            $ref: '#/components/schemas/PracticeQuestion'
+    PracticeAnswerItemDTO:
+      type: object
+      required: [questionId, userAnswer]
+      properties:
+        questionId:
+          type: integer
+          format: int64
+        userAnswer:
+          type: string
+    PracticeSubmitRequestDTO:
+      type: object
+      required: [questionAnswerList, costSeconds]
+      properties:
+        questionAnswerList:
+          type: array
+          items:
+            $ref: '#/components/schemas/PracticeAnswerItemDTO'
+        costSeconds:
+          type: integer
+          minimum: 0
+    PracticeSubmitResponse:
+      type: object
+      properties:
+        recordId:
+          type: integer
+          format: int64
+        score:
+          type: number
+        correctCount:
+          type: integer
+        wrongCount:
+          type: integer
+    AdminLoginRequestDTO:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    AdminInfo:
+      type: object
+      properties:
+        adminId:
+          type: integer
+          format: int64
+        username:
+          type: string
+        roleList:
+          type: array
+          items:
+            type: string
+    AdminLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        adminInfo:
+          $ref: '#/components/schemas/AdminInfo'
+    AdminCourseCreateRequestDTO:
+      type: object
+      required: [courseName, categoryId]
+      properties:
+        courseName:
+          type: string
+        summary:
+          type: string
+        coverUrl:
+          type: string
+        categoryId:
+          type: integer
+          format: int64
+        hotScore:
+          type: integer
+    AdminCourseItem:
+      type: object
+      properties:
+        courseId:
+          type: integer
+          format: int64
+        courseName:
+          type: string
+        categoryName:
+          type: string
+        status:
+          type: string
+          enum: [draft, pending, published, offline]
+    AdminMessageCreateRequestDTO:
+      type: object
+      required: [title, messageType, content, receiverType]
+      properties:
+        title:
+          type: string
+        messageType:
+          type: string
+          enum: [system, activity, service]
+        content:
+          type: string
+        receiverType:
+          type: string
+          enum: [all, role, user]
+        receiverIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    ReportHandleRequestDTO:
+      type: object
+      required: [handleResult]
+      properties:
+        handleResult:
+          type: string
+        handleRemark:
+          type: string
+    ReportHandleResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, processing, resolved, rejected]
+        handledAt:
+          type: string
+    RecommendSlotSaveRequestDTO:
+      type: object
+      required: [slotName, pageCode, resourceType]
+      properties:
+        slotName:
+          type: string
+        pageCode:
+          type: string
+        resourceType:
+          type: string
+          enum: [course, category, content, link]
+        targetId:
+          type: integer
+          format: int64
+        sortNo:
+          type: integer
+    RecommendSlotItem:
+      type: object
+      properties:
+        slotId:
+          type: integer
+          format: int64
+        slotName:
+          type: string
+        resourceType:
+          type: string
+        status:
+          type: string
+          enum: [enabled, disabled]
+    MemberPackageItem:
+      type: object
+      properties:
+        packageId:
+          type: integer
+          format: int64
+        packageName:
+          type: string
+        price:
+          type: number
+        durationDays:
+          type: integer
+    MessageTemplateSaveRequestDTO:
+      type: object
+      required: [templateName, messageType, contentTemplate, channelList]
+      properties:
+        templateName:
+          type: string
+        messageType:
+          type: string
+        titleTemplate:
+          type: string
+        contentTemplate:
+          type: string
+        channelList:
+          type: array
+          items:
+            type: string
+            enum: [site_message, sms, email, push]
+    UserStatisticsResponse:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        newUsersToday:
+          type: integer
+        trendData:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              count:
+                type: integer
+    AppLoginResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/AppLoginResponse'
+    UserIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  format: int64
+    RegisterResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  format: int64
+                registerTime:
+                  type: string
+    ExpireSecondsEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                expireSeconds:
+                  type: integer
+    CourseDetailResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/CourseDetailResponse'
+    EvaluationIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                evaluationId:
+                  type: integer
+                  format: int64
+    EvaluationCreateResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                evaluationId:
+                  type: integer
+                  format: int64
+                createdAt:
+                  type: string
+    PracticePaperDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PracticePaperDetailResponse'
+    PracticeSubmitResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PracticeSubmitResponse'
+    ReadStatusEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                readStatus:
+                  type: string
+                  enum: [unread, read]
+    AdminLoginResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/AdminLoginResponse'
+    AdminCoursePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminCourseItem'
+    CourseIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                courseId:
+                  type: integer
+                  format: int64
+    MessageIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                messageId:
+                  type: integer
+                  format: int64
+    ReportHandleResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/ReportHandleResponse'
+    RecommendSlotPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RecommendSlotItem'
+    SlotIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                slotId:
+                  type: integer
+                  format: int64
+    MemberPackagePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MemberPackageItem'
+    TemplateIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                templateId:
+                  type: integer
+                  format: int64
+    UserStatisticsEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/UserStatisticsResponse'
+    SearchResultItem:
+      type: object
+      properties:
+        resultType:
+          type: string
+          enum: [course, category, content]
+        resultId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        summary:
+          type: string
+        coverUrl:
+          type: string
+        hotScore:
+          type: number
+    SearchResultPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SearchResultItem'
+    MemberBenefitItem:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+    MemberCenterResponse:
+      type: object
+      properties:
+        memberLevel:
+          type: string
+        expireTime:
+          type: string
+        benefitList:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberBenefitItem'
+    MemberCenterEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/MemberCenterResponse'
+    ContentReportRequestDTO:
+      type: object
+      required: [reportReason]
+      properties:
+        reportReason:
+          type: string
+        reportRemark:
+          type: string
+    ReportIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                reportId:
+                  type: integer
+                  format: int64
+    AdminUserCreateRequestDTO:
+      type: object
+      required: [username, password, confirmPassword, role]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+    AdminUserItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+        status:
+          type: string
+          enum: [enabled, disabled]
+    AdminUserPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminUserItem'
+    MemberPackageSaveRequestDTO:
+      type: object
+      required: [packageName, price, durationDays]
+      properties:
+        packageName:
+          type: string
+        price:
+          type: number
+        durationDays:
+          type: integer
+        benefitList:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberBenefitItem'
+    PackageIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                packageId:
+                  type: integer
+                  format: int64
+    MessageTemplateItem:
+      type: object
+      properties:
+        templateId:
+          type: integer
+          format: int64
+        templateName:
+          type: string
+        channelList:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, enabled, disabled]
+    MessageTemplatePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MessageTemplateItem'
+    QuestionBankCreateRequestDTO:
+      type: object
+      required: [bankName]
+      properties:
+        bankName:
+          type: string
+        courseId:
+          type: integer
+          format: int64
+        description:
+          type: string
+    QuestionBankItem:
+      type: object
+      properties:
+        bankId:
+          type: integer
+          format: int64
+        bankName:
+          type: string
+        questionCount:
+          type: integer
+        status:
+          type: string
+          enum: [draft, published, disabled]
+    QuestionBankPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/QuestionBankItem'
+    BankIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                bankId:
+                  type: integer
+                  format: int64
+    SimpleSuccessEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                success:
+                  type: boolean
+    HotContentItem:
+      type: object
+      properties:
+        contentId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        cover:
+          type: string
+        summary:
+          type: string
+    HotContentListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/HotContentItem'
+    HomeCourseCardItem:
+      type: object
+      properties:
+        courseId:
+          type: integer
+          format: int64
+        courseName:
+          type: string
+        summary:
+          type: string
+        coverUrl:
+          type: string
+        hotScore:
+          type: number
+        badge:
+          type: string
+    HomeCoursePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/HomeCourseCardItem'
+    HomeCategoryItem:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+          format: int64
+        categoryName:
+          type: string
+        summary:
+          type: string
+        hotScore:
+          type: number
+    HomeCategoryPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/HomeCategoryItem'
+    KeywordListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                keywordList:
+                  type: array
+                  items:
+                    type: string
+    HistoryListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                historyList:
+                  type: array
+                  items:
+                    type: string
+    SuggestListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                suggestList:
+                  type: array
+                  items:
+                    type: string
+    CategoryNode:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+          format: int64
+        categoryName:
+          type: string
+        description:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryNode'
+    CategoryTreeEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/CategoryNode'
+    OverviewEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                username:
+                  type: string
+                avatar:
+                  type: string
+                memberInfo:
+                  $ref: '#/components/schemas/MemberInfoSummary'
+    GrowthEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                growthValue:
+                  type: integer
+                level:
+                  type: string
+                continuousDays:
+                  type: integer
+    CheckInStatusEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                checkedInToday:
+                  type: boolean
+                continuousDays:
+                  type: integer
+    CheckInResultEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                rewardInfo:
+                  $ref: '#/components/schemas/RewardInfo'
+                checkedInAt:
+                  type: string
+    TaskItem:
+      type: object
+      properties:
+        taskId:
+          type: integer
+          format: int64
+        taskName:
+          type: string
+        taskStatus:
+          type: string
+        progressValue:
+          type: integer
+    TaskListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TaskItem'
+    GardenContentItem:
+      type: object
+      properties:
+        contentId:
+          type: integer
+          format: int64
+        sourceName:
+          type: string
+        contentText:
+          type: string
+        likeCount:
+          type: integer
+        commentCount:
+          type: integer
+        favoriteCount:
+          type: integer
+    GardenContentPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/GardenContentItem'
+    GardenContentDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                contentId:
+                  type: integer
+                  format: int64
+                sourceInfo:
+                  $ref: '#/components/schemas/SourceInfo'
+                contentText:
+                  type: string
+                imageList:
+                  type: array
+                  items:
+                    type: string
+    CommentItem:
+      type: object
+      properties:
+        commentId:
+          type: integer
+          format: int64
+        nickname:
+          type: string
+        commentText:
+          type: string
+        createdAt:
+          type: string
+    CommentPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CommentItem'
+    CommentIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                commentId:
+                  type: integer
+                  format: int64
+                createdAt:
+                  type: string
+    MessageItem:
+      type: object
+      properties:
+        messageId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        messageType:
+          type: string
+        sendTime:
+          type: string
+        readStatus:
+          type: string
+          enum: [unread, read]
+    AdminMessageItem:
+      type: object
+      properties:
+        messageId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        messageType:
+          type: string
+        receiverType:
+          type: string
+        sendTime:
+          type: string
+        status:
+          type: string
+    MessagePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MessageItem'
+    ServiceSessionItem:
+      type: object
+      properties:
+        sessionId:
+          type: integer
+          format: int64
+        serviceStatus:
+          type: string
+        lastMessage:
+          type: string
+    ServiceSessionPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ServiceSessionItem'
+    ServiceMessageItem:
+      type: object
+      properties:
+        messageId:
+          type: integer
+          format: int64
+        senderType:
+          type: string
+        messageText:
+          type: string
+        sendTime:
+          type: string
+    ServiceMessagePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ServiceMessageItem'
+    DashboardSummaryEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                userTotal:
+                  type: integer
+                courseTotal:
+                  type: integer
+                activeToday:
+                  type: integer
+                memberTotal:
+                  type: integer
+    AdminMessagePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminMessageItem'
+    AdminMemberItem:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+        memberLevel:
+          type: string
+        expireTime:
+          type: string
+    AdminMemberPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminMemberItem'
+    ServiceTicketItem:
+      type: object
+      properties:
+        ticketId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        latestMessage:
+          type: string
+        status:
+          type: string
+    ServiceTicketPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ServiceTicketItem'
+    ReplyIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                replyId:
+                  type: integer
+                  format: int64
+                replyTime:
+                  type: string
+    SearchKeywordSaveRequestDTO:
+      type: object
+      required: [keyword, scene]
+      properties:
+        keyword:
+          type: string
+        scene:
+          type: string
+        sortNo:
+          type: integer
+        effectTimeRange:
+          type: array
+          items:
+            type: string
+    SearchKeywordItem:
+      type: object
+      properties:
+        keywordId:
+          type: integer
+          format: int64
+        keyword:
+          type: string
+        sortNo:
+          type: integer
+        status:
+          type: string
+    SearchKeywordPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SearchKeywordItem'
+    KeywordIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                keywordId:
+                  type: integer
+                  format: int64
+    ReportItem:
+      type: object
+      properties:
+        reportId:
+          type: integer
+          format: int64
+        reportType:
+          type: string
+        targetId:
+          type: integer
+          format: int64
+        status:
+          type: string
+    ReportPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ReportItem'
+    SensitiveWordItem:
+      type: object
+      properties:
+        wordId:
+          type: integer
+          format: int64
+        word:
+          type: string
+        status:
+          type: string
+    SensitiveWordPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SensitiveWordItem'
+    CourseStatisticsEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                totalCourses:
+                  type: integer
+                viewCount:
+                  type: integer
+                trendData:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                      count:
+                        type: integer
+    ActivityStatisticsEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                activeUsers:
+                  type: integer
+                visitCount:
+                  type: integer
+                trendData:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                      count:
+                        type: integer
+    CategoryDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                categoryId:
+                  type: integer
+                  format: int64
+                categoryName:
+                  type: string
+                description:
+                  type: string
+    SubCategoryDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                subCategoryId:
+                  type: integer
+                  format: int64
+                subCategoryName:
+                  type: string
+                courseList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/HomeCourseCardItem'
+    CourseEvaluationItem:
+      type: object
+      properties:
+        evaluationId:
+          type: integer
+          format: int64
+        score:
+          type: integer
+        content:
+          type: string
+        userName:
+          type: string
+        createdAt:
+          type: string
+    CourseEvaluationPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CourseEvaluationItem'
+    CourseChapterListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/CourseChapter'
+    StudyProgressRequestDTO:
+      type: object
+      required: [chapterId, progressPercent]
+      properties:
+        chapterId:
+          type: integer
+          format: int64
+        progressPercent:
+          type: number
+    StudyProgressEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                recordId:
+                  type: integer
+                  format: int64
+                updatedAt:
+                  type: string
+    PracticePaperItem:
+      type: object
+      properties:
+        paperId:
+          type: integer
+          format: int64
+        paperName:
+          type: string
+        paperType:
+          type: string
+        totalScore:
+          type: number
+    PracticePaperPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PracticePaperItem'
+    PracticeEntryItem:
+      type: object
+      properties:
+        entryId:
+          type: integer
+          format: int64
+        entryName:
+          type: string
+        entryType:
+          type: string
+    PracticeEntryListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PracticeEntryItem'
+    ProfileEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                username:
+                  type: string
+                nickname:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                avatar:
+                  type: string
+    ProfileUpdateRequestDTO:
+      type: object
+      properties:
+        nickname:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        avatar:
+          type: string
+    UpdatedAtEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                updatedAt:
+                  type: string
+    StudyRecordItem:
+      type: object
+      properties:
+        recordId:
+          type: integer
+          format: int64
+        courseName:
+          type: string
+        progressPercent:
+          type: number
+        lastStudyTime:
+          type: string
+    AdminStudyRecordItem:
+      type: object
+      properties:
+        recordId:
+          type: integer
+          format: int64
+        username:
+          type: string
+        courseName:
+          type: string
+        progressPercent:
+          type: number
+        lastStudyTime:
+          type: string
+    StudyRecordPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/StudyRecordItem'
+    PracticeRecordItem:
+      type: object
+      properties:
+        recordId:
+          type: integer
+          format: int64
+        paperName:
+          type: string
+        score:
+          type: number
+        submitTime:
+          type: string
+    PracticeRecordPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PracticeRecordItem'
+    WrongQuestionItem:
+      type: object
+      properties:
+        questionId:
+          type: integer
+          format: int64
+        questionTitle:
+          type: string
+        wrongCount:
+          type: integer
+    WrongQuestionPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/WrongQuestionItem'
+    OfflineDownloadItem:
+      type: object
+      properties:
+        downloadId:
+          type: integer
+          format: int64
+        courseName:
+          type: string
+        downloadStatus:
+          type: string
+    OfflineDownloadPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OfflineDownloadItem'
+    FavoriteItem:
+      type: object
+      properties:
+        favoriteId:
+          type: integer
+          format: int64
+        targetId:
+          type: integer
+          format: int64
+        title:
+          type: string
+    FavoritePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FavoriteItem'
+    SystemInfoEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                systemName:
+                  type: string
+                version:
+                  type: string
+                copyright:
+                  type: string
+    ScanConfigEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                scanType:
+                  type: string
+                scanTips:
+                  type: string
+    FollowResultEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                followed:
+                  type: boolean
+    LikeResultEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                liked:
+                  type: boolean
+                likeCount:
+                  type: integer
+    FavoriteResultEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                favorited:
+                  type: boolean
+    FaqItem:
+      type: object
+      properties:
+        faqId:
+          type: integer
+          format: int64
+        question:
+          type: string
+        answer:
+          type: string
+    FaqListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FaqItem'
+    UserStatusEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [enabled, disabled]
+    FileUrlEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                fileUrl:
+                  type: string
+    ImportResultEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                successCount:
+                  type: integer
+                failCount:
+                  type: integer
+    AdminUserUpdateRequestDTO:
+      type: object
+      properties:
+        email:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+        status:
+          type: string
+          enum: [enabled, disabled]
+    AdminUserDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                basicInfo:
+                  $ref: '#/components/schemas/AdminUserItem'
+                studyRecordList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/StudyRecordItem'
+                favoriteList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FavoriteItem'
+    TrendPoint:
+      type: object
+      properties:
+        xAxis:
+          type: array
+          items:
+            type: string
+        series:
+          type: array
+          items:
+            type: integer
+    TrendChartEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/TrendPoint'
+    RecentUserItem:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        registerTime:
+          type: string
+        status:
+          type: string
+    RecentUserListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecentUserItem'
+    HomeCourseConfigSaveRequestDTO:
+      type: object
+      required: [sectionType, courseId, courseName]
+      properties:
+        sectionType:
+          type: string
+          enum: [recommend, hot, latest]
+        courseId:
+          type: integer
+          format: int64
+        courseName:
+          type: string
+        summary:
+          type: string
+        hotScore:
+          type: integer
+        sortNo:
+          type: integer
+    HomeCourseConfigUpdateRequestDTO:
+      type: object
+      properties:
+        summary:
+          type: string
+        hotScore:
+          type: integer
+        sortNo:
+          type: integer
+        displayStatus:
+          type: string
+          enum: [visible, hidden]
+    HomeCourseConfigItem:
+      type: object
+      properties:
+        configId:
+          type: integer
+          format: int64
+        sectionType:
+          type: string
+        courseName:
+          type: string
+        hotScore:
+          type: integer
+    HomeCourseConfigPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/HomeCourseConfigItem'
+    ConfigIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                configId:
+                  type: integer
+                  format: int64
+    CategorySaveRequestDTO:
+      type: object
+      required: [categoryName]
+      properties:
+        parentId:
+          type: integer
+          format: int64
+        categoryName:
+          type: string
+        description:
+          type: string
+    CategoryIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                categoryId:
+                  type: integer
+                  format: int64
+    AdminCourseDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                basicInfo:
+                  $ref: '#/components/schemas/AdminCourseItem'
+                chapterList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CourseChapter'
+    CourseStatusEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [draft, pending, published, offline]
+    AdminCourseEvaluationItem:
+      type: object
+      properties:
+        evaluationId:
+          type: integer
+          format: int64
+        courseName:
+          type: string
+        score:
+          type: integer
+        status:
+          type: string
+    AdminCourseEvaluationPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminCourseEvaluationItem'
+    CourseChapterSaveRequestDTO:
+      type: object
+      required: [chapterTitle, chapterContent, sortNo]
+      properties:
+        chapterTitle:
+          type: string
+        chapterContent:
+          type: string
+        sortNo:
+          type: integer
+    ChapterIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                chapterId:
+                  type: integer
+                  format: int64
+    AdminContentSaveRequestDTO:
+      type: object
+      required: [contentType, sourceName, contentText]
+      properties:
+        contentType:
+          type: string
+        sourceName:
+          type: string
+        contentText:
+          type: string
+        imageList:
+          type: array
+          items:
+            type: string
+    AdminContentItem:
+      type: object
+      properties:
+        contentId:
+          type: integer
+          format: int64
+        contentType:
+          type: string
+        authorName:
+          type: string
+        auditStatus:
+          type: string
+    AdminContentPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminContentItem'
+    ContentIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                contentId:
+                  type: integer
+                  format: int64
+    MemberIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                memberId:
+                  type: integer
+                  format: int64
+    MemberRenewalItem:
+      type: object
+      properties:
+        renewalId:
+          type: integer
+          format: int64
+        username:
+          type: string
+        amount:
+          type: number
+        renewalTime:
+          type: string
+    GrowthRuleItem:
+      type: object
+      properties:
+        taskCode:
+          type: string
+        taskName:
+          type: string
+        taskType:
+          type: string
+        rewardValue:
+          type: integer
+    GrowthRuleListEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                ruleList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/GrowthRuleItem'
+    GrowthRuleUpdateRequestDTO:
+      type: object
+      properties:
+        ruleList:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrowthRuleItem'
+    AdminStudyRecordPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminStudyRecordItem'
+    QuestionItem:
+      type: object
+      properties:
+        questionId:
+          type: integer
+          format: int64
+        questionType:
+          type: string
+        difficulty:
+          type: string
+        status:
+          type: string
+    QuestionPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/QuestionItem'
+    QuestionStatusEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [draft, published, disabled]
+    PracticePaperCreateRequestDTO:
+      type: object
+      required: [paperName, paperType, questionIdList]
+      properties:
+        paperName:
+          type: string
+        paperType:
+          type: string
+          enum: [chapter, special, mock]
+        questionIdList:
+          type: array
+          items:
+            type: integer
+            format: int64
+        courseId:
+          type: integer
+          format: int64
+    PaperIdResponseEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                paperId:
+                  type: integer
+                  format: int64
+    PracticeAnalysisEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                totalSubmitCount:
+                  type: integer
+                avgScore:
+                  type: number
+                scoreDistribution:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ScoreDistributionItem'
+    WrongQuestionAnalysisEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  questionId:
+                    type: integer
+                    format: int64
+                  wrongCount:
+                    type: integer
+                  wrongRate:
+                    type: number
+    AdminSystemInfoUpdateRequestDTO:
+      type: object
+      properties:
+        systemName:
+          type: string
+        version:
+          type: string
+        copyright:
+          type: string
+        contactInfo:
+          type: string
+    AdminSystemInfoEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                systemName:
+                  type: string
+                version:
+                  type: string
+                copyright:
+                  type: string
+                contactInfo:
+                  type: string
+    FeatureConfigUpdateRequestDTO:
+      type: object
+      properties:
+        scanEnabled:
+          type: boolean
+        offlineDownloadEnabled:
+          type: boolean
+        registerEnabled:
+          type: boolean
+    FeatureConfigEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                scanEnabled:
+                  type: boolean
+                offlineDownloadEnabled:
+                  type: boolean
+                registerEnabled:
+                  type: boolean
+    OperationLogItem:
+      type: object
+      properties:
+        logId:
+          type: integer
+          format: int64
+        operateTime:
+          type: string
+        operatorName:
+          type: string
+        operationType:
+          type: string
+        ip:
+          type: string
+    OperationLogPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OperationLogItem'
+    LoginLogItem:
+      type: object
+      properties:
+        logId:
+          type: integer
+          format: int64
+        loginTime:
+          type: string
+        username:
+          type: string
+        loginType:
+          type: string
+        ip:
+          type: string
+        status:
+          type: string
+    LoginLogPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LoginLogItem'
+    MemberRenewalPageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MemberRenewalItem'
+    ServiceTicketDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                ticketInfo:
+                  $ref: '#/components/schemas/ServiceTicketItem'
+                messageList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ServiceMessageItem'
+    AdminContentDetailEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                contentId:
+                  type: integer
+                  format: int64
+                sourceInfo:
+                  $ref: '#/components/schemas/SourceInfo'
+                contentText:
+                  type: string
+                auditStatus:
+                  type: string
+    ContentAuditRequestDTO:
+      type: object
+      required: [auditStatus]
+      properties:
+        auditStatus:
+          type: string
+          enum: [pending, approved, rejected]
+        auditRemark:
+          type: string
+    ContentAuditEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                auditStatus:
+                  type: string
+                  enum: [pending, approved, rejected]
+    AdminFavoriteItem:
+      type: object
+      properties:
+        favoriteId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        targetTitle:
+          type: string
+        favoriteTime:
+          type: string
+    AdminFavoritePageEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                pageNum:
+                  type: integer
+                pageSize:
+                  type: integer
+                total:
+                  type: integer
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AdminFavoriteItem'

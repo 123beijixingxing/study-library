@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="7px" height="10px" viewBox="0 0 7 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+    <title>侧拉</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="画板" transform="translate(-234.000000, -151.000000)" fill="#72879D">
+            <g id="侧拉" transform="translate(237.500000, 156.000000) rotate(-90.000000) translate(-237.500000, -156.000000) translate(233.000000, 153.000000)">
+                <path d="M8.91838839,0.772283565 L8.8678212,0.837894063 L5.04295722,5.73147704 C4.91333879,5.89694351 4.7193912,6 4.50272039,6 C4.28604957,6 4.09210199,5.893743 3.9628036,5.73147704 L0.140499982,0.847175548 L0.0758507877,0.765882541 C0.0281640055,0.687790046 0,0.594015042 0,0.493839014 C0,0.221795487 0.208029586,0 0.466626365,0 L8.53305359,0 C8.79165037,0 9,0.221795487 9,0.493839014 C9,0.597215554 8.96895558,0.693871019 8.91838839,0.772283565" id="Fill-1"></path>
+            </g>
+        </g>
+    </g>
+</svg>

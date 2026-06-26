@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.practice.mapper.PracticeWrongQuestionStatMapper">
+
+  <resultMap id="PracticeWrongQuestionStatResultMap" type="com.studylib.modules.practice.entity.PracticeWrongQuestionStatEntity">
+    <id column="id" property="id" />
+    <result column="paper_id" property="paperId" />
+    <result column="question_id" property="questionId" />
+    <result column="question_title" property="questionTitle" />
+    <result column="wrong_count" property="wrongCount" />
+    <result column="wrong_rate" property="wrongRate" />
+    <result column="difficulty" property="difficulty" />
+    <result column="sort_no" property="sortNo" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="countByPaperId" resultType="java.lang.Long">
+    select count(1)
+    from practice_wrong_question_stats
+    where paper_id = #{paperId}
+      and deleted = false
+  </select>
+
+  <select id="selectByPaperId" resultMap="PracticeWrongQuestionStatResultMap">
+    select id, paper_id, question_id, question_title, wrong_count, wrong_rate, difficulty, sort_no,
+           created_at, updated_at, created_by, updated_by, deleted
+    from practice_wrong_question_stats
+    where paper_id = #{paperId}
+      and deleted = false
+    order by sort_no asc, id asc
+  </select>
+
+  <update id="softDeleteByPaperId">
+    update practice_wrong_question_stats
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where paper_id = #{paperId}
+      and deleted = false
+  </update>
+
+  <insert id="insertBatch">
+    insert into practice_wrong_question_stats (
+      paper_id, question_id, question_title, wrong_count, wrong_rate, difficulty, sort_no,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values
+    <foreach collection="statList" item="item" separator=",">
+      (#{paperId}, #{item.questionId}, #{item.questionTitle}, #{item.wrongCount}, #{item.wrongRate}, #{item.difficulty}, #{item.sortNo},
+       #{item.createdAt}, #{item.updatedAt}, #{item.createdBy}, #{item.updatedBy}, #{item.deleted})
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studylib.modules.practice.mapper.PracticePaperMapper">
+
+  <resultMap id="PracticePaperResultMap" type="com.studylib.modules.practice.entity.PracticePaperEntity">
+    <id column="paper_id" property="paperId" />
+    <result column="paper_name" property="paperName" />
+    <result column="paper_type" property="paperType" />
+    <result column="course_name" property="courseName" />
+    <result column="rule_desc" property="ruleDesc" />
+    <result column="question_count" property="questionCount" />
+    <result column="status" property="status" />
+    <result column="avg_score" property="avgScore" />
+    <result column="update_time" property="updateTime" />
+    <result column="created_at" property="createdAt" />
+    <result column="updated_at" property="updatedAt" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="deleted" property="deleted" />
+  </resultMap>
+
+  <select id="selectById" resultMap="PracticePaperResultMap">
+    select paper_id, paper_name, paper_type, course_name, rule_desc, question_count, status, avg_score, update_time,
+           created_at, updated_at, created_by, updated_by, deleted
+    from practice_papers
+    where paper_id = #{paperId}
+      and deleted = false
+  </select>
+
+  <select id="countPage" resultType="java.lang.Long">
+    select count(1)
+    from practice_papers
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (paper_name like concat('%', #{keyword}, '%') or course_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectPage" resultMap="PracticePaperResultMap">
+    select paper_id, paper_name, paper_type, course_name, rule_desc, question_count, status, avg_score, update_time,
+           created_at, updated_at, created_by, updated_by, deleted
+    from practice_papers
+    <where>
+      and deleted = false
+      <if test="keyword != null and keyword != ''">
+        and (paper_name like concat('%', #{keyword}, '%') or course_name like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="status != null and status != '' and status != 'all'">
+        and status = #{status}
+      </if>
+    </where>
+    order by paper_id desc
+    limit #{pageSize} offset #{offset}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="paperId">
+    insert into practice_papers (
+      paper_name, paper_type, course_name, rule_desc, question_count, status, avg_score, update_time,
+      created_at, updated_at, created_by, updated_by, deleted
+    )
+    values (
+      #{paperName}, #{paperType}, #{courseName}, #{ruleDesc}, #{questionCount}, #{status}, #{avgScore}, #{updateTime},
+      #{createdAt}, #{updatedAt}, #{createdBy}, #{updatedBy}, #{deleted}
+    )
+  </insert>
+
+  <update id="update">
+    update practice_papers
+    set paper_name = #{paperName},
+        paper_type = #{paperType},
+        course_name = #{courseName},
+        rule_desc = #{ruleDesc},
+        question_count = #{questionCount},
+        status = #{status},
+        avg_score = #{avgScore},
+        update_time = #{updateTime},
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy},
+        deleted = #{deleted}
+    where paper_id = #{paperId}
+      and deleted = false
+  </update>
+
+  <update id="deleteById">
+    update practice_papers
+    set deleted = true,
+        updated_at = #{updatedAt},
+        updated_by = #{updatedBy}
+    where paper_id = #{paperId}
+      and deleted = false
+  </update>
+</mapper>

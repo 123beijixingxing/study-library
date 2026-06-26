@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习通后台 - 用户管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 240px; background: #001529; color: white; position: fixed; height: 100vh; }
+        .logo { height: 64px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; border-bottom: 1px solid #ffffff10; }
+        .logo span { color: #00d9ff; }
+        .menu { padding: 16px 0; }
+        .menu-item { padding: 14px 24px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.3s; color: #ffffff80; }
+        .menu-item:hover, .menu-item.active { background: #ffffff10; color: white; }
+        .menu-item.active { border-left: 3px solid #00d9ff; }
+        .menu-icon { font-size: 18px; }
+        .main { flex: 1; margin-left: 240px; }
+        .header { height: 64px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .header-title { font-size: 18px; font-weight: 600; color: #333; }
+        .content { padding: 24px; }
+        
+        .toolbar { background: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; display: flex; gap: 12px; align-items: center; }
+        .search-input { flex: 1; padding: 8px 16px; border: 1px solid #d9d9d9; border-radius: 8px; max-width: 300px; }
+        .btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; border: none; transition: all 0.3s; }
+        .btn-primary { background: #00d9ff; color: white; }
+        .btn-primary:hover { background: #00b8d9; }
+        .btn-default { background: white; border: 1px solid #d9d9d9; color: #333; }
+        
+        .table-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        th { background: #fafafa; font-weight: 600; color: #333; font-size: 14px; }
+        td { font-size: 14px; color: #666; }
+        .action-btns { display: flex; gap: 8px; }
+        .action-btn { padding: 4px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .action-btn.view { background: #e6f7ff; color: #1890ff; }
+        .action-btn.edit { background: #fff7e6; color: #fa8c16; }
+        .action-btn.delete { background: #fff1f0; color: #f5222d; }
+        
+        .pagination { margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; }
+        .page-btn { padding: 6px 12px; border: 1px solid #d9d9d9; background: white; border-radius: 4px; cursor: pointer; }
+        .page-btn.active { background: #00d9ff; color: white; border-color: #00d9ff; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 24px; width: 500px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { font-size: 18px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .modal-close { cursor: pointer; font-size: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #333; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 8px; font-size: 14px; }
+        .modal-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo"><span>学习通</span>后台</div>
+            <nav class="menu">
+                <div class="menu-item" onclick="location.href='dashboard.html'">
+                    <span class="menu-icon">📊</span>仪表盘
+                </div>
+                <div class="menu-item active" onclick="location.href='user.html'">
+                    <span class="menu-icon">👥</span>用户管理
+                </div>
+                <div class="menu-item" onclick="location.href='home-manage.html'">
+                    <span class="menu-icon">🏠</span>首页管理
+                </div>
+                <div class="menu-item" onclick="location.href='course.html'">
+                    <span class="menu-icon">📚</span>课程管理
+                </div>
+                <div class="menu-item" onclick="location.href='garden-manage.html'">
+                    <span class="menu-icon">🌳</span>园地管理
+                </div>
+                <div class="menu-item" onclick="location.href='member.html'">
+                    <span class="menu-icon">👑</span>会员管理
+                </div>
+                <div class="menu-item" onclick="location.href='system.html'">
+                    <span class="menu-icon">⚙️</span>系统管理
+                </div>
+                <div class="menu-item" onclick="location.href='statistics.html'">
+                    <span class="menu-icon">📈</span>数据统计
+                </div>
+                <div class="menu-item" onclick="location.href='logs.html'">
+                    <span class="menu-icon">📝</span>日志管理
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <header class="header">
+                <div class="header-title">用户管理</div>
+                <div>管理员</div>
+            </header>
+
+            <div class="content">
+                <div class="toolbar">
+                    <input type="text" class="search-input" placeholder="搜索用户名、邮箱、手机号...">
+                    <button class="btn btn-primary" onclick="showAddModal()">+ 添加用户</button>
+                    <button class="btn btn-default">导出</button>
+                    <button class="btn btn-default">导入</button>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox"></th>
+                                <th>ID</th>
+                                <th>用户名</th>
+                                <th>邮箱</th>
+                                <th>手机号</th>
+                                <th>角色</th>
+                                <th>状态</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>1</td>
+                                <td>zhangsan</td>
+                                <td>zhangsan@example.com</td>
+                                <td>13800138000</td>
+                                <td>普通用户</td>
+                                <td><span style="color:#52c41a">正常</span></td>
+                                <td>2026-01-15</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view" onclick="showViewModal()">查看</button>
+                                        <button class="action-btn edit" onclick="showEditModal()">编辑</button>
+                                        <button class="action-btn delete">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2</td>
+                                <td>lisi</td>
+                                <td>lisi@example.com</td>
+                                <td>13800138001</td>
+                                <td>VIP用户</td>
+                                <td><span style="color:#52c41a">正常</span></td>
+                                <td>2026-01-20</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn edit">编辑</button>
+                                        <button class="action-btn delete">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>3</td>
+                                <td>wangwu</td>
+                                <td>wangwu@example.com</td>
+                                <td>13800138002</td>
+                                <td>普通用户</td>
+                                <td><span style="color:#faad14">禁用</span></td>
+                                <td>2026-02-01</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn edit">编辑</button>
+                                        <button class="action-btn delete">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <button class="page-btn">‹</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">›</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加用户弹窗 -->
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>添加用户</span>
+                <span class="modal-close" onclick="closeModal('add-modal')">×</span>
+            </div>
+            <div class="form-group">
+                <label>用户名 *</label>
+                <input type="text" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>密码 *</label>
+                <input type="password" placeholder="请输入密码">
+            </div>
+            <div class="form-group">
+                <label>确认密码 *</label>
+                <input type="password" placeholder="请确认密码">
+            </div>
+            <div class="form-group">
+                <label>邮箱 *</label>
+                <input type="email" placeholder="请输入邮箱">
+            </div>
+            <div class="form-group">
+                <label>手机号 *</label>
+                <input type="tel" placeholder="请输入手机号">
+            </div>
+            <div class="form-group">
+                <label>角色</label>
+                <select>
+                    <option>普通用户</option>
+                    <option>VIP用户</option>
+                    <option>超级管理员</option>
+                </select>
+            </div>
+            <div class="modal-btns">
+                <button class="btn btn-default" onclick="closeModal('add-modal')">取消</button>
+                <button class="btn btn-primary" onclick="saveUser()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑用户弹窗 -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>编辑用户</span>
+                <span class="modal-close" onclick="closeModal('edit-modal')">×</span>
+            </div>
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" value="zhangsan" disabled>
+            </div>
+            <div class="form-group">
+                <label>邮箱</label>
+                <input type="email" value="zhangsan@example.com">
+            </div>
+            <div class="form-group">
+                <label>手机号</label>
+                <input type="tel" value="13800138000">
+            </div>
+            <div class="form-group">
+                <label>角色</label>
+                <select>
+                    <option selected>普通用户</option>
+                    <option>VIP用户</option>
+                </select>
+            </div>
+            <div class="modal-btns">
+                <button class="btn btn-default" onclick="closeModal('edit-modal')">取消</button>
+                <button class="btn btn-primary" onclick="saveUser()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAddModal() { document.getElementById('add-modal').classList.add('active'); }
+        function showEditModal() { document.getElementById('edit-modal').classList.add('active'); }
+        function showViewModal() { alert('查看用户详情'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function saveUser() { alert('保存成功'); closeModal('add-modal'); closeModal('edit-modal'); }
+    </script>
+</body>
+</html>

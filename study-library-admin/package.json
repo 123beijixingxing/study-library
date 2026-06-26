@@ -1,0 +1,36 @@
+{
+  "name": "study-library-admin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "type-check": "vue-tsc -b",
+    "format": "prettier --write \"src/**/*.{ts,vue,scss,css,json}\""
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "element-plus": "^2.10.3",
+    "vue": "^3.5.17",
+    "vue-i18n": "^11.1.9",
+    "vue-router": "^4.5.1",
+    "vuex": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/tsconfig": "^0.7.0",
+    "fast-glob": "^3.3.3",
+    "prettier": "^3.6.2",
+    "sass": "^1.89.2",
+    "typescript": "~5.8.3",
+    "vite": "^5.4.19",
+    "vite-plugin-svg-icons": "^2.0.1",
+    "vitest": "2.1.8",
+    "vue-tsc": "^2.2.10"
+  }
+}

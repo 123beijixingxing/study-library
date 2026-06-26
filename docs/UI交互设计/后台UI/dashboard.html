@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习通后台 - 仪表盘</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; }
+        
+        .layout { display: flex; min-height: 100vh; }
+        
+        /* 侧边栏 */
+        .sidebar { width: 240px; background: #001529; color: white; position: fixed; height: 100vh; overflow-y: auto; }
+        .logo { height: 64px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; border-bottom: 1px solid #ffffff10; }
+        .logo span { color: #00d9ff; }
+        .menu { padding: 16px 0; }
+        .menu-item { padding: 14px 24px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.3s; color: #ffffff80; }
+        .menu-item:hover, .menu-item.active { background: #ffffff10; color: white; }
+        .menu-item.active { border-left: 3px solid #00d9ff; }
+        .menu-icon { font-size: 18px; }
+        
+        /* 主体 */
+        .main { flex: 1; margin-left: 240px; }
+        
+        /* 头部 */
+        .header { height: 64px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .header-title { font-size: 18px; font-weight: 600; color: #333; }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .user-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #00d9ff, #0077b6); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; }
+        
+        /* 内容区 */
+        .content { padding: 24px; }
+        
+        /* 统计卡片 */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .stat-title { font-size: 14px; color: #666; margin-bottom: 8px; }
+        .stat-value { font-size: 32px; font-weight: 600; color: #333; }
+        .stat-change { font-size: 14px; margin-top: 8px; }
+        .stat-change.up { color: #52c41a; }
+        .stat-change.down { color: #f5222d; }
+        
+        /* 图表区域 */
+        .chart-section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .chart-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .chart-placeholder { height: 300px; background: linear-gradient(135deg, #f0f2f5, #e6f7ff); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; }
+        
+        /* 表格 */
+        .table-section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .table-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        th { background: #fafafa; font-weight: 600; color: #333; font-size: 14px; }
+        td { font-size: 14px; color: #666; }
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; }
+        .status-badge.success { background: #f6ffed; color: #52c41a; }
+        .status-badge.warning { background: #fffbe6; color: #faad14; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo"><span>学习通</span>后台</div>
+            <nav class="menu">
+                <div class="menu-item active" onclick="location.href='dashboard.html'">
+                    <span class="menu-icon">📊</span>仪表盘
+                </div>
+                <div class="menu-item" onclick="location.href='user.html'">
+                    <span class="menu-icon">👥</span>用户管理
+                </div>
+                <div class="menu-item" onclick="location.href='home-manage.html'">
+                    <span class="menu-icon">🏠</span>首页管理
+                </div>
+                <div class="menu-item" onclick="location.href='course.html'">
+                    <span class="menu-icon">📚</span>课程管理
+                </div>
+                <div class="menu-item" onclick="location.href='garden-manage.html'">
+                    <span class="menu-icon">🌳</span>园地管理
+                </div>
+                <div class="menu-item" onclick="location.href='member.html'">
+                    <span class="menu-icon">👑</span>会员管理
+                </div>
+                <div class="menu-item" onclick="location.href='system.html'">
+                    <span class="menu-icon">⚙️</span>系统管理
+                </div>
+                <div class="menu-item" onclick="location.href='statistics.html'">
+                    <span class="menu-icon">📈</span>数据统计
+                </div>
+                <div class="menu-item" onclick="location.href='logs.html'">
+                    <span class="menu-icon">📝</span>日志管理
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主体 -->
+        <main class="main">
+            <header class="header">
+                <div class="header-title">仪表盘</div>
+                <div class="header-right">
+                    <span>🔔</span>
+                    <div class="user-info">
+                        <div class="avatar">管</div>
+                        <span>管理员</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">用户总数</div>
+                        <div class="stat-value">12,856</div>
+                        <div class="stat-change up">↑ 12.5% 较上周</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">课程总数</div>
+                        <div class="stat-value">1,234</div>
+                        <div class="stat-change up">↑ 8.2% 较上周</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">今日活跃</div>
+                        <div class="stat-value">3,456</div>
+                        <div class="stat-change up">↑ 5.3% 较昨日</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">会员数量</div>
+                        <div class="stat-value">2,156</div>
+                        <div class="stat-change down">↓ 2.1% 较上月</div>
+                    </div>
+                </div>
+
+                <!-- 图表 -->
+                <div class="chart-section">
+                    <div class="chart-title">用户增长趋势</div>
+                    <div class="chart-placeholder">📈 图表区域 - 折线图</div>
+                </div>
+
+                <!-- 表格 -->
+                <div class="table-section">
+                    <div class="table-title">最新注册用户</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>邮箱</th>
+                                <th>注册时间</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>zhangsan</td>
+                                <td>zhangsan@example.com</td>
+                                <td>2026-03-06 10:23</td>
+                                <td><span class="status-badge success">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td>lisi</td>
+                                <td>lisi@example.com</td>
+                                <td>2026-03-06 09:45</td>
+                                <td><span class="status-badge success">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td>wangwu</td>
+                                <td>wangwu@example.com</td>
+                                <td>2026-03-05 16:30</td>
+                                <td><span class="status-badge warning">待审核</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
